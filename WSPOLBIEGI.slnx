@@ -1,0 +1,17 @@
+<Solution>
+  <Project Path="Application/Application.csproj" Id="1fad9a40-cd27-496c-9706-f0d9d8d9800e">
+    <BuildDependency Project="Data/Data.csproj" />
+    <BuildDependency Project="Model/Model.csproj" />
+  </Project>
+  <Project Path="ApplicationTest/ApplicationTest.csproj" Id="df2153ef-8a06-4ecc-ab2c-2b61e7ef67f6" />
+  <Project Path="Data/Data.csproj" Id="24d78c94-182f-48bd-9fd0-ba0b17d38ac9" />
+  <Project Path="DataTest/DataTest.csproj" Id="5ce107fb-8212-49a1-a0f5-ced6b9e6acef" />
+  <Project Path="Model/Model.csproj" Id="70b704d2-54e6-409f-96e9-4a2969b0d546" />
+  <Project Path="View/View.csproj" Id="11ccb3e6-164e-4ca7-b17f-28e00cacc59d">
+    <BuildDependency Project="ViewModel/ViewModel.csproj" />
+  </Project>
+  <Project Path="ViewModel/ViewModel.csproj" Id="0f29b8d6-c22f-446d-a7da-a2f4d6e19b16">
+    <BuildDependency Project="Application/Application.csproj" />
+    <BuildDependency Project="Model/Model.csproj" />
+  </Project>
+</Solution>
