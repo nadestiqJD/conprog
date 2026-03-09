@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "GUI",
+    "Projects": [
+      {
+        "Path": "View\\View.csproj",
+        "Action": "Start",
+        "DebugTarget": "View"
+      }
+    ]
+  },
+  {
+    "Name": "Tests",
+    "Projects": [
+      {
+        "Path": "ApplicationTest\\ApplicationTest.csproj",
+        "Action": "Start",
+        "DebugTarget": "ApplicationTest"
+      },
+      {
+        "Path": "DataTest\\DataTest.csproj",
+        "Action": "Start",
+        "DebugTarget": "DataTest"
+      }
+    ]
+  }
+]
