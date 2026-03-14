@@ -24,8 +24,8 @@ namespace DataTest
             IPosition oldPos1 = ball1.CurrentPosition;
             IPosition oldPos2 = ball2.CurrentPosition;
 
-            System.Console.WriteLine(ball1.CurrentPosition);
-            System.Console.WriteLine(ball2.CurrentPosition);
+            Console.WriteLine(ball1.CurrentPosition);
+            Console.WriteLine(ball2.CurrentPosition);
 
             board.StopBall(ball1);
             board.MoveBalls();
@@ -33,8 +33,8 @@ namespace DataTest
             IPosition newPos1 = ball1.CurrentPosition;
             IPosition newPos2 = ball2.CurrentPosition;
 
-            System.Console.WriteLine(ball1.CurrentPosition);
-            System.Console.WriteLine(ball2.CurrentPosition);
+            Console.WriteLine(ball1.CurrentPosition);
+            Console.WriteLine(ball2.CurrentPosition);
 
             Assert.AreEqual(oldPos1, newPos1);
             Assert.AreNotEqual(oldPos2, newPos2);
@@ -45,10 +45,10 @@ namespace DataTest
         {
             IBoard board = new RectangularBoard { Height = 100, Width = 100 };
 
-            IBall leftBall = new VectorBall (new DefaultPosition { X = 2 , Y = 50 }, new IntegerVector { DeltaX = -1, DeltaY = 0 });
-            IBall rightBall = new VectorBall (new DefaultPosition { X = 98 , Y = 50 }, new IntegerVector { DeltaX = 1, DeltaY = 0 });
-            IBall topBall = new VectorBall (new DefaultPosition { X = 50 , Y = 2 }, new IntegerVector { DeltaX = 0, DeltaY = -1 });
-            IBall bottomBall = new VectorBall (new DefaultPosition { X = 50 , Y = 98 }, new IntegerVector { DeltaX = 0, DeltaY = 1 });
+            IBall leftBall = new VectorBall (new DefaultPosition { X = 2 , Y = 50 }, new BinaryVector { DeltaX = -1, DeltaY = 0 });
+            IBall rightBall = new VectorBall (new DefaultPosition { X = 98 , Y = 50 }, new BinaryVector { DeltaX = 1, DeltaY = 0 });
+            IBall topBall = new VectorBall (new DefaultPosition { X = 50 , Y = 2 }, new BinaryVector { DeltaX = 0, DeltaY = -1 });
+            IBall bottomBall = new VectorBall (new DefaultPosition { X = 50 , Y = 98 }, new BinaryVector { DeltaX = 0, DeltaY = 1 });
 
             board.AddBall(leftBall);
             board.AddBall(rightBall);

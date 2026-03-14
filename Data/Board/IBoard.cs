@@ -7,6 +7,10 @@ namespace Data.Board
 {
     public interface IBoard
     {
+        int Width { get; }
+
+        int Height { get; }
+
         void MoveBalls();
 
         void AddBall(IBall ball);

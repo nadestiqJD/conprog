@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Data.Board
 {
-    public class RectangularBoard : IRectangularBoard
+    public class RectangularBoard : IBoard
     {
         public int Width { get; set; }
 

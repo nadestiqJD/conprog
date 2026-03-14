@@ -15,7 +15,7 @@ namespace Data.Ball
         {
             Radius = 1;
             CurrentPosition = new DefaultPosition();
-            MovementVector = new IntegerVector { DeltaX = random.Next(1, 10), DeltaY = random.Next(1, 10) };
+            MovementVector = new BinaryVector { DeltaX = random.Next(0, 2), DeltaY = random.Next(0, 2) };
         }
 
         public VectorBall(int radius) : this()
@@ -41,12 +41,7 @@ namespace Data.Ball
 
         public void Move(object sender, EventArgs e)
         {
-            if (!(sender is IRectangularBoard)) 
-            {
-                throw new ArgumentException("VectorBall requires Board to be a rectangle.");
-            }
-
-            IRectangularBoard board = (IRectangularBoard) sender;
+            IBoard board = (IBoard) sender;
             IPosition newPosition = MovementVector.addToPosition(CurrentPosition);
             if (newPosition.X - Radius < 0 || newPosition.Y - Radius < 0 
                 || newPosition.X + Radius > board.Width || newPosition.Y + Radius > board.Height)
