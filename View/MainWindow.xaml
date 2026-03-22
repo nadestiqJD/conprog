@@ -4,13 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
+        xmlns:vm="clr-namespace:ViewModel;assembly=View.Library"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="720" Width="1280">
+
+    <Window.DataContext>
+        <vm:ArenaViewModel />
+    </Window.DataContext>
+
     <Grid>
-        <Label Content="ahoj světe!" 
-               HorizontalAlignment="Center" 
-               VerticalAlignment="Center" 
-               FontWeight="Bold" 
-               FontSize="24"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+            <TextBlock Text="Ilość kul:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+            <TextBox Width="60" 
+                     Text="{Binding BallCount, UpdateSourceTrigger=PropertyChanged}" 
+                     VerticalContentAlignment="Center" Margin="0,0,20,0"/>
+
+            <Button Content="START" 
+                    Command="{Binding StartCommand}" 
+                    Padding="20,5" Background="LightGreen"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" 
+        x:Name="Arena"
+        Width="600" 
+        Height="400"
+        BorderBrush="Black" 
+        BorderThickness="3" 
+        Margin="20" 
+        Background="GhostWhite"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        ClipToBounds="True">
+
+            <Canvas x:Name="SimulationCanvas" Background="Transparent" />
+        </Border>
     </Grid>
 </Window>
