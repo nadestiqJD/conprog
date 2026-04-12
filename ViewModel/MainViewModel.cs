@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -7,18 +8,16 @@ namespace ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private int _ballCount = 10;
-
-        private string _message;
+        private MainModel _model;
 
         public int BallCount
         {
-            get => _ballCount;
+            get => _model.BallCount;
             set
             {
-                if (_ballCount != value)
+                if (_model.BallCount != value)
                 {
-                    _ballCount = value;
+                    _model.BallCount = value;
                     OnPropertyChanged();
                 }
             }
@@ -26,19 +25,40 @@ namespace ViewModel
 
         public string Message
         {
-            get => _message;
+            get => _model.Message;
             set
             {
-                _message = value;
+                _model.Message = value;
                 OnPropertyChanged();
             }
         }
+        public int Width
+        {
+            get => _model.Board.Width;
+            set
+            {
+                _model.Board.Width = value;
+                OnPropertyChanged();
+            }
 
+        }
+
+        public int Height
+        {
+            get => _model.Board.Height;
+            set
+            {
+                _model.Board.Height = value;
+                OnPropertyChanged();
+            }
+
+        }
         public ICommand StartCommand { get; }
 
         public MainViewModel()
         {
             StartCommand = new RelayCommand<object>(_ => StartSimulation());
+            _model = new MainModel();
         }
 
         private void StartSimulation()

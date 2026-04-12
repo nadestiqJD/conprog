@@ -37,7 +37,7 @@ namespace Data.Vector
             }
         }
 
-        public IPosition addToPosition(IPosition oldPosition)
+        public IPosition AddToPosition(IPosition oldPosition)
         {
             return new DefaultPosition
             {

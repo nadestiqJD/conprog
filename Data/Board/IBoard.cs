@@ -7,9 +7,9 @@ namespace Data.Board
 {
     public interface IBoard
     {
-        int Width { get; }
+        int Width { get; set; }
 
-        int Height { get; }
+        int Height { get; set; }
 
         void MoveBalls();
 

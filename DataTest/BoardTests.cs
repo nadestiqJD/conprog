@@ -14,8 +14,8 @@ namespace DataTest
         {
             IBoard board = new RectangularBoard { Height = 100, Width = 100 };
 
-            IBall ball1 = new VectorBall(new DefaultPosition { X = 40, Y = 60 });
-            IBall ball2 = new VectorBall(new DefaultPosition { X = 70, Y = 30 });
+            IBall ball1 = new BinaryBall(new DefaultPosition { X = 40, Y = 60 });
+            IBall ball2 = new BinaryBall(new DefaultPosition { X = 70, Y = 30 });
 
             board.AddBall(ball1);
             board.AddBall(ball2);
@@ -45,10 +45,10 @@ namespace DataTest
         {
             IBoard board = new RectangularBoard { Height = 100, Width = 100 };
 
-            IBall leftBall = new VectorBall (new DefaultPosition { X = 2 , Y = 50 }, new BinaryVector { DeltaX = -1, DeltaY = 0 });
-            IBall rightBall = new VectorBall (new DefaultPosition { X = 98 , Y = 50 }, new BinaryVector { DeltaX = 1, DeltaY = 0 });
-            IBall topBall = new VectorBall (new DefaultPosition { X = 50 , Y = 2 }, new BinaryVector { DeltaX = 0, DeltaY = -1 });
-            IBall bottomBall = new VectorBall (new DefaultPosition { X = 50 , Y = 98 }, new BinaryVector { DeltaX = 0, DeltaY = 1 });
+            IBall leftBall = new BinaryBall (new DefaultPosition { X = 2 , Y = 50 }, new BinaryVector { DeltaX = -1, DeltaY = 0 });
+            IBall rightBall = new BinaryBall (new DefaultPosition { X = 98 , Y = 50 }, new BinaryVector { DeltaX = 1, DeltaY = 0 });
+            IBall topBall = new BinaryBall (new DefaultPosition { X = 50 , Y = 2 }, new BinaryVector { DeltaX = 0, DeltaY = -1 });
+            IBall bottomBall = new BinaryBall (new DefaultPosition { X = 50 , Y = 98 }, new BinaryVector { DeltaX = 0, DeltaY = 1 });
 
             board.AddBall(leftBall);
             board.AddBall(rightBall);

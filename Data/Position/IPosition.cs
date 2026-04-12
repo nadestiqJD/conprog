@@ -6,8 +6,8 @@ namespace Data.Position
 {
     public interface IPosition
     {
-        float X { get; }
+        double X { get; }
 
-        float Y { get; }
+        double Y { get; }
     }
 }

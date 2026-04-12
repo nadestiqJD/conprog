@@ -32,8 +32,8 @@
 
         <Border Grid.Row="1" 
                 x:Name="Arena"
-                Width="600" 
-                Height="400"
+                Width="{Binding Width}" 
+                Height="{Binding Height}"
                 BorderBrush="Black" 
                 BorderThickness="3" 
                 Margin="20" 

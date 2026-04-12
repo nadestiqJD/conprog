@@ -1,6 +1,6 @@
 ﻿using Data.Board;
-using Data.Vector;
 using Data.Position;
+using Data.Vector;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,47 +11,49 @@ namespace Data.Ball
     {
         readonly Random random = new Random();
 
-        public VectorBall()
-        {
-            Radius = 1;
-            CurrentPosition = new DefaultPosition();
-            MovementVector = new BinaryVector { DeltaX = random.Next(0, 2), DeltaY = random.Next(0, 2) };
-        }
-
-        public VectorBall(int radius) : this()
-        {
-            Radius = radius;
-        }
-
-        public VectorBall(IPosition position) : this()
-        {
-            CurrentPosition = position;
-        }
-
-        public VectorBall(IPosition position, IVector vector) : this(position)
-        {
-            MovementVector = vector;
-        }
+        public IPosition CurrentPosition { get; set; }
 
         public int Radius { get; }
 
-        public IPosition CurrentPosition { get; private set; }
+        private IVector Vector { get; set; }
 
-        public IVector MovementVector { get; private set; }
-
-        public void Move(object sender, EventArgs e)
+        public void Move(object? sender, EventArgs e)
         {
-            IBoard board = (IBoard) sender;
-            IPosition newPosition = MovementVector.addToPosition(CurrentPosition);
-            if (newPosition.X - Radius < 0 || newPosition.Y - Radius < 0 
-                || newPosition.X + Radius > board.Width || newPosition.Y + Radius > board.Height)
-            {
+            IBoard board = (IBoard)sender;
+            IPosition newPosition = Vector.AddToPosition(CurrentPosition);
+
+            double validatedX, validatedY;
+            if (newPosition.X + Radius > board.Width) {
+                validatedX = board.Width - Radius;
                 board.StopBall(this);
+            } else if (newPosition.X - Radius < 0) {
+                validatedX = Radius;
+                board.StopBall(this);
+            } else {
+                validatedX = newPosition.X;
             }
-            else
-            {
-                CurrentPosition = newPosition;
+
+            if (newPosition.Y + Radius > board.Height) {
+                validatedY = board.Height - Radius;
+                board.StopBall(this);
+            } else if (newPosition.Y - Radius < 0) {
+                validatedY= Radius;
+                board.StopBall(this);
+            } else {
+                validatedY = newPosition.Y;
             }
+
+            CurrentPosition = new DefaultPosition { X = validatedX, Y = validatedY };
+        }
+
+        public VectorBall()
+        {
+            Radius = 10;
+            CurrentPosition = new DefaultPosition {X = random.Next(), Y = random.Next() };
+            Vector = new AngleVector(random.NextDouble(), random.Next());
         }
     }
+
+
+
 }

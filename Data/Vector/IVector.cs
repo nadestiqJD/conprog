@@ -7,6 +7,6 @@ namespace Data.Vector
 {
     public interface IVector
     {
-        IPosition addToPosition(IPosition oldPosition);
+        IPosition AddToPosition(IPosition oldPosition);
     }
 }

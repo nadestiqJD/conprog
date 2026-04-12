@@ -6,9 +6,9 @@ namespace Data.Board
 {
     public class RectangularBoard : IBoard
     {
-        public int Width { get; set; }
+        public int Width { get; set; } = 750;
 
-        public int Height { get; set; }
+        public int Height { get; set; } = 550;
 
         public event EventHandler? OnMoveBalls;
 
