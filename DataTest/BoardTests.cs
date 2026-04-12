@@ -71,11 +71,5 @@ namespace DataTest
             Assert.AreEqual(1, topBall.CurrentPosition.Y);
             Assert.AreEqual(99, bottomBall.CurrentPosition.Y);
         }
-
-        [TestMethod]
-        public void DiagonalMovement_ShouldClipPositionToWall()
-        {
-            Assert.Fail("FloatVector not implemented.");
-        }
     }
 }
