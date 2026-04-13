@@ -33,6 +33,12 @@ namespace Data.Ball
             MovementVector = vector;
         }
 
+        public event EventHandler? PositionChanged;
+        private void RaisePositionChanged()
+        {
+            PositionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         public int Radius { get; }
 
         public IPosition CurrentPosition { get; private set; }
@@ -51,6 +57,7 @@ namespace Data.Ball
             else
             {
                 CurrentPosition = newPosition;
+                RaisePositionChanged();
             }
         }
     }

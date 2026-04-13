@@ -7,9 +7,15 @@ using System.Text;
 
 namespace Data.Ball
 {
-    public class VectorBall : IBall
+    public class AngleBall : IBall
     {
         readonly Random random = new Random();
+
+        public event EventHandler? PositionChanged;
+        private void RaisePositionChanged()
+        {
+            PositionChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         public IPosition CurrentPosition { get; set; }
 
@@ -19,7 +25,7 @@ namespace Data.Ball
 
         public void Move(object? sender, EventArgs e)
         {
-            IBoard board = (IBoard)sender;
+            IBoard board = (IBoard) sender;
             IPosition newPosition = Vector.AddToPosition(CurrentPosition);
 
             double validatedX, validatedY;
@@ -44,9 +50,10 @@ namespace Data.Ball
             }
 
             CurrentPosition = new DefaultPosition { X = validatedX, Y = validatedY };
+            RaisePositionChanged();
         }
 
-        public VectorBall()
+        public AngleBall()
         {
             Radius = 10;
             CurrentPosition = new DefaultPosition {X = random.Next(), Y = random.Next() };

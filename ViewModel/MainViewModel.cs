@@ -1,76 +1,49 @@
-﻿using Model;
+﻿using Data.Ball;
+using Data.Board;
+using Model;
+using Model.Ball;
+using Model.Board;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace ViewModel
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ObservableObject
     {
-        private MainModel _model;
 
+        private ObservableCollection<IBallModel> Balls = new ObservableCollection<IBallModel>();
+
+        public IBoardModel Board { get; private set; } = new BoardModel(new EventBoard());
+
+        private int _ballCount = 10;
         public int BallCount
         {
-            get => _model.BallCount;
+            get => _ballCount;
             set
             {
-                if (_model.BallCount != value)
+                if (_ballCount != value)
                 {
-                    _model.BallCount = value;
-                    OnPropertyChanged();
+                    _ballCount = value;
+                    RaisePropertyChanged();
                 }
             }
         }
-
-        public string Message
-        {
-            get => _model.Message;
-            set
-            {
-                _model.Message = value;
-                OnPropertyChanged();
-            }
-        }
-        public int Width
-        {
-            get => _model.Board.Width;
-            set
-            {
-                _model.Board.Width = value;
-                OnPropertyChanged();
-            }
-
-        }
-
-        public int Height
-        {
-            get => _model.Board.Height;
-            set
-            {
-                _model.Board.Height = value;
-                OnPropertyChanged();
-            }
-
-        }
+        
         public ICommand StartCommand { get; }
 
         public MainViewModel()
         {
             StartCommand = new RelayCommand<object>(_ => StartSimulation());
-            _model = new MainModel();
         }
 
         private void StartSimulation()
         {
-            Message = $"Uruchamiam symulację dla {BallCount} kul.";
-            Console.WriteLine(Message);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            Balls.Clear();
+            
+            // todo: wywołać StartSimulation z Model
         }
     }
 }

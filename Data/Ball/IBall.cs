@@ -9,6 +9,8 @@ namespace Data.Ball
     {
         void Move(object? sender, EventArgs e);
 
+        event EventHandler PositionChanged;
+
         IPosition CurrentPosition { get; }
 
         int Radius { get; }

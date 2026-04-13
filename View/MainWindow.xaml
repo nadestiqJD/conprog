@@ -32,8 +32,8 @@
 
         <Border Grid.Row="1" 
                 x:Name="Arena"
-                Width="{Binding Width}" 
-                Height="{Binding Height}"
+                Width="{Binding Board.Width, UpdateSourceTrigger=PropertyChanged}" 
+                Height="{Binding Board.Height, UpdateSourceTrigger=PropertyChanged}"
                 BorderBrush="Black" 
                 BorderThickness="3" 
                 Margin="20" 

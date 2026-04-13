@@ -11,6 +11,8 @@ namespace Data.Board
 
         int Height { get; set; }
 
+        event EventHandler DimensionsChanged;
+
         void MoveBalls();
 
         void AddBall(IBall ball);
