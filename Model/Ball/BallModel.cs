@@ -23,6 +23,8 @@ namespace Model.Ball
             get => _ball.CurrentPosition; 
         }
 
+        public int Diameter { get => _ball.Radius * 2; }
+
         private void HandleNewPosition()
         {
             RaisePropertyChanged(nameof(CurrentPosition));

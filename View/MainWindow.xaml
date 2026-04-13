@@ -32,8 +32,8 @@
 
         <Border Grid.Row="1" 
                 x:Name="Arena"
-                Width="{Binding Board.Width, UpdateSourceTrigger=PropertyChanged}" 
-                Height="{Binding Board.Height, UpdateSourceTrigger=PropertyChanged}"
+                Width="{Binding Board.Width}" 
+                Height="{Binding Board.Height}"
                 BorderBrush="Black" 
                 BorderThickness="3" 
                 Margin="20" 
@@ -42,7 +42,29 @@
                 VerticalAlignment="Center"
                 ClipToBounds="True">
 
-            <Canvas x:Name="SimulationCanvas" Background="Transparent" />
+            <ItemsControl ItemsSource="{Binding Balls}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding CurrentPosition.X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding CurrentPosition.Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="{Binding Diameter}" 
+                                 Height="{Binding Diameter}" 
+                                 Fill="Blue" >
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Border>
     </Grid>
 </Window>

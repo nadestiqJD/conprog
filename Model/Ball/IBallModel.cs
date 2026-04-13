@@ -10,5 +10,6 @@ namespace Model.Ball
     public interface IBallModel : INotifyPropertyChanged
     {
         IPosition CurrentPosition { get; }
+        int Diameter { get; }
     }
 }

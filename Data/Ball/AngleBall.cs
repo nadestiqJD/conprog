@@ -9,8 +9,6 @@ namespace Data.Ball
 {
     public class AngleBall : IBall
     {
-        readonly Random random = new Random();
-
         public event EventHandler? PositionChanged;
         private void RaisePositionChanged()
         {
@@ -23,27 +21,28 @@ namespace Data.Ball
 
         private IVector Vector { get; set; }
 
-        public void Move(object? sender, EventArgs e)
+        public void Move(object sender, EventArgs e)
         {
-            IBoard board = (IBoard) sender;
+            IBoard board = (IBoard)sender;
             IPosition newPosition = Vector.AddToPosition(CurrentPosition);
 
-            double validatedX, validatedY;
-            if (newPosition.X + Radius > board.Width) {
-                validatedX = board.Width - Radius;
+            double validatedX; 
+            double validatedY;
+            if (newPosition.X + 2 * Radius > board.Width) {
+                validatedX = board.Width - 2 * Radius;
                 board.StopBall(this);
-            } else if (newPosition.X - Radius < 0) {
-                validatedX = Radius;
+            } else if (newPosition.X < 0) {
+                validatedX = 0;
                 board.StopBall(this);
             } else {
                 validatedX = newPosition.X;
             }
 
-            if (newPosition.Y + Radius > board.Height) {
-                validatedY = board.Height - Radius;
+            if (newPosition.Y + 2 * Radius > board.Height) {
+                validatedY = board.Height - 2 * Radius;
                 board.StopBall(this);
-            } else if (newPosition.Y - Radius < 0) {
-                validatedY= Radius;
+            } else if (newPosition.Y < 0) {
+                validatedY = 0;
                 board.StopBall(this);
             } else {
                 validatedY = newPosition.Y;
@@ -53,11 +52,11 @@ namespace Data.Ball
             RaisePositionChanged();
         }
 
-        public AngleBall()
+        public AngleBall(IPosition currentPosition, IVector vector, int radius)
         {
-            Radius = 10;
-            CurrentPosition = new DefaultPosition {X = random.Next(), Y = random.Next() };
-            Vector = new AngleVector(random.NextDouble(), random.Next());
+            Radius = radius;
+            Vector = vector;
+            CurrentPosition = currentPosition;
         }
     }
 
