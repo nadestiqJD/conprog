@@ -4,9 +4,10 @@ using Data.Board;
 using Data.Position;
 using Data.Vector;
 
-namespace DataTest
+namespace DataTest.Board
 {
     [TestClass]
+    // Deprecated
     public sealed class BoardTests
     {
         [TestMethod]

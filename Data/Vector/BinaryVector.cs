@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Data.Vector
 {
+    // Deprecated
     public class BinaryVector : IVector
     {
         private void deltaValidator(int x)

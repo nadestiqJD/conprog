@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Data.Board
 {
+    // TODO: Rename to DefaultBoard
     public class EventBoard : IBoard
     {
         private int _width = 750;
@@ -35,6 +36,7 @@ namespace Data.Board
             DimensionsChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        // TODO: Collection for Balls, Add and Remove methods for accessing it.
         public event EventHandler? OnMoveBalls;
 
         public void AddBall(IBall ball)

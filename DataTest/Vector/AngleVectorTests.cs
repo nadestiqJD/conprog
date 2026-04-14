@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataTest
+namespace DataTest.Vector
 {
     [TestClass]
     public class AngleVectorTests

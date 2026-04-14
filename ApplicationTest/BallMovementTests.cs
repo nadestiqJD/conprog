@@ -1,7 +1,7 @@
 ﻿namespace ApplicationTest
 {
     [TestClass]
-    public sealed class Test1
+    public sealed class BallMovementTests
     {
         [TestMethod]
         public void TestMethod1()

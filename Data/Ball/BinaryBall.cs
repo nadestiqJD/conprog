@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Data.Ball
 {
+    // Deprecated
     public class BinaryBall : IBall
     {
         readonly Random random = new Random();

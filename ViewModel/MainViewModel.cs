@@ -36,8 +36,6 @@ namespace ViewModel
             }
         }
 
-        //public int BallDiameter => Balls.FirstOrDefault().Radius * 2;
-        
         public ICommand StartCommand { get; }
 
         public MainViewModel()

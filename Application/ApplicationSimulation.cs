@@ -1,4 +1,5 @@
-﻿using Data.Ball;
+﻿using Data;
+using Data.Ball;
 using Data.Board;
 using Data.Position;
 using Data.Vector;
@@ -11,40 +12,38 @@ namespace Application
 {
     public class ApplicationSimulation : IApplicationSimulation
     {
-        readonly Random random = new Random();
-
-        private static readonly int _radius = 10;
-        private static readonly double _velocity = _radius * 0.8;
         private readonly Timer _timer;
+
+        private readonly IDataSimulation _dataSimulation;
 
         public ApplicationSimulation()
         {
             _timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-
+            _dataSimulation = new DataSimulation();
         }
 
         IBoard Board { get; set; } = new EventBoard();
+
+        public void MoveAllBallsInBoard(IBoard board)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveBall(IBall ball)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
         {
             for (int i = 0; i < ballCount; i++)
             {
-                IBall ball = new AngleBall(
-                    new DefaultPosition 
-                    { 
-                        X = random.Next(0 + _radius, Board.Width - _radius), 
-                        Y = random.Next(0 + _radius, Board.Height - _radius) 
-                    }, 
-                    new AngleVector(random.Next(5, 11) / 10.0 * _velocity, random.Next(0, 361)), 
-                    _radius
-                );
-                Board.AddBall(ball);
-
-                ballCallBack(ball);
+                ballCallBack(_dataSimulation.CreateBallInBoard(Board));
             }
             boardCallBack(Board);
         }
 
+        // TODO: adjust this for changes in IBoard and IBall
         private void MoveTask(object? _)
         {
             Board.MoveBalls();

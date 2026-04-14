@@ -15,6 +15,11 @@ namespace Data.Vector
             return new DefaultPosition {X = oldPosition.X + Math.Cos(rad) * Velocity, Y = oldPosition.Y + Math.Sin(rad) * Velocity}; 
         }
 
+        public IPosition GetDelta()
+        {
+            throw new NotImplementedException();
+        }
+
         public AngleVector(double velocity, int angle)
         {
             Velocity = velocity;

@@ -8,7 +8,14 @@ namespace Application
 {
     public interface IApplicationSimulation
     {
-        void Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack);
+        // Start simmulation for given amount of Balls.
+        void Start(int ballCount, Action<IBall> ballCreationCallback, Action<IBoard> boardCreationCallback);
+
+        // Calculates and sets new position for Ball.
+        void MoveBall(IBall ball);
+
+        // Calculates and sets new position for each Ball in Board.
+        void MoveAllBallsInBoard(IBoard board);
 
     }
 }
