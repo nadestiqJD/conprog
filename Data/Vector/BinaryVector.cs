@@ -38,12 +38,12 @@ namespace Data.Vector
             }
         }
 
-        public IPosition AddToPosition(IPosition oldPosition)
+        public IPosition GetDelta()
         {
             return new DefaultPosition
             {
-                X = oldPosition.X + DeltaX,
-                Y = oldPosition.Y + DeltaY,
+                X = DeltaX,
+                Y = DeltaY
             };
         }
 

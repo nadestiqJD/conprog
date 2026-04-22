@@ -22,16 +22,72 @@ namespace Application
             _dataSimulation = new DataSimulation();
         }
 
-        IBoard Board { get; set; } = new EventBoard();
+        IBoard Board { get; set; } = new DefaultBoard();
 
         public void MoveAllBallsInBoard(IBoard board)
-        {
-            throw new NotImplementedException();
+        {   
+            List<IBall> toRemove = new List<IBall>(); 
+
+            foreach (var ball in board.Balls)
+            {
+                if (!MoveBall(ball))
+                { 
+                    toRemove.Add(ball);
+                };
+            }
+
+            foreach (var ball in toRemove)
+            {
+                board.Balls.Remove(ball);
+            }
         }
 
-        public void MoveBall(IBall ball)
+        public bool MoveBall(IBall ball)
         {
-            throw new NotImplementedException();
+            IPosition newPosition;
+
+            double validatedX;
+            double validatedY;
+
+            bool continueMoving = true;
+
+            IPosition positionDelta = ball.Vector.GetDelta();
+
+            newPosition = new DefaultPosition { X = positionDelta.X + ball.CurrentPosition.X, Y = positionDelta.Y + ball.CurrentPosition.Y};
+
+            if (newPosition.X + 2 * ball.Radius + 6 > Board.Width)
+            {
+                validatedX = Board.Width - 2 * ball.Radius - 6;
+                continueMoving = false;
+            }
+            else if (newPosition.X < 0)
+            {
+                validatedX = 0;
+                continueMoving = false;
+            }
+            else
+            {
+                validatedX = newPosition.X;
+            }
+
+            if (newPosition.Y + 2 * ball.Radius + 6 > Board.Height)
+            {
+                validatedY = Board.Height - 2 * ball.Radius - 6;
+                continueMoving = false;
+            }
+            else if (newPosition.Y < 0)
+            {
+                validatedY = 0;
+                continueMoving = false;
+            }
+            else
+            {
+                validatedY = newPosition.Y;
+            }
+
+            ball.CurrentPosition = new DefaultPosition { X = validatedX, Y = validatedY };
+
+            return continueMoving;
         }
 
         public void Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
@@ -43,10 +99,9 @@ namespace Application
             boardCallBack(Board);
         }
 
-        // TODO: adjust this for changes in IBoard and IBall
         private void MoveTask(object? _)
         {
-            Board.MoveBalls();
+            MoveAllBallsInBoard(Board);
         }
 
     }

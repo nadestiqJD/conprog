@@ -13,12 +13,6 @@ namespace Data.Board
 
         event EventHandler DimensionsChanged;
 
-        // TODO: Remove this method
-        void MoveBalls();
-
-        void AddBall(IBall ball);
-
-        // TODO: Rename to RemoveBall
-        void StopBall(IBall ball);
+        List<IBall> Balls { get; }
     }
 }

@@ -20,7 +20,7 @@ namespace ViewModel
 
         public ObservableCollection<IBallModel> Balls { get; private set; } = new ObservableCollection<IBallModel>();
 
-        public IBoardModel Board { get; private set; } = new BoardModel(new EventBoard());
+        public IBoardModel Board { get; private set; } = new BoardModel(new DefaultBoard());
 
         private int _ballCount = 10;
         public int BallCount

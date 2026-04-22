@@ -20,13 +20,13 @@ namespace Data
             IBall ball = new AngleBall(
                     new DefaultPosition
                     {
-                        X = random.Next(0 + _radius, board.Width - _radius),
-                        Y = random.Next(0 + _radius, board.Height - _radius)
+                        X = random.Next(0 + 2 * _radius, board.Width - 2 * _radius),
+                        Y = random.Next(0 + 2 * _radius, board.Height - 2 * _radius)
                     },
                     new AngleVector(random.Next(5, 11) / 10.0 * _velocity, random.Next(0, 361)),
                     _radius
                 );
-            board.AddBall(ball);
+            board.Balls.Add(ball);
             return ball;
         }
     }

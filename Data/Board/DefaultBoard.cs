@@ -1,11 +1,11 @@
 ﻿using Data.Ball;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Data.Board
 {
-    // TODO: Rename to DefaultBoard
-    public class EventBoard : IBoard
+    public class DefaultBoard : IBoard
     {
         private int _width = 750;
         public int Width
@@ -35,23 +35,7 @@ namespace Data.Board
         {
             DimensionsChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        // TODO: Collection for Balls, Add and Remove methods for accessing it.
-        public event EventHandler? OnMoveBalls;
-
-        public void AddBall(IBall ball)
-        {
-            OnMoveBalls += ball.Move;
-        }
-
-        public virtual void MoveBalls()
-        {
-            OnMoveBalls?.Invoke(this, null);
-        }
-
-        public void StopBall(IBall ball)
-        {
-            OnMoveBalls -= ball.Move;
-        }
+        
+        public List<IBall>Balls { get; } = new List<IBall>();
     }
 }
