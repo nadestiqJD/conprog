@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:View"
         xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280">
+        Title="MainWindow" 
+        Height="720" Width="1280"
+        MinHeight="700" MinWidth="900"
+        >
 
     <Grid>
         <Grid.RowDefinitions>
