@@ -17,5 +17,7 @@ namespace Application
         // Calculates and sets new position for each Ball in Board.
         void MoveAllBallsInBoard(IBoard board);
 
+        IBoard Board { get; }
+
     }
 }

@@ -21,8 +21,7 @@ namespace Application
             _timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
             _dataSimulation = new DataSimulation();
         }
-
-        IBoard Board { get; set; } = new DefaultBoard();
+        public IBoard Board { get; set; } = new DefaultBoard();
 
         public void MoveAllBallsInBoard(IBoard board)
         {   
