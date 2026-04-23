@@ -2,6 +2,7 @@
 using Data.Board;
 using Data.Position;
 using Data.Vector;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,6 +15,12 @@ namespace Data
 
         private static readonly int _radius = 10;
         private static readonly double _velocity = _radius * 0.8;
+        private readonly ILogger<DataSimulation> _logger;
+
+        public DataSimulation(ILogger<DataSimulation> logger)
+        {
+            _logger = logger;
+        }
 
         public IBall CreateBallInBoard(IBoard board)
         {

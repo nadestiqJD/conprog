@@ -38,9 +38,9 @@ namespace ViewModel
 
         public ICommand StartCommand { get; }
 
-        public MainViewModel()
+        public MainViewModel(IApplicationSimulation applicationSimulation)
         {
-            _applicationSimulation = new ApplicationSimulation();
+            _applicationSimulation = applicationSimulation;
 
             StartCommand = new RelayCommand<object>(_ => StartSimulation());
         }

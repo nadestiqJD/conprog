@@ -3,6 +3,7 @@ using Data.Ball;
 using Data.Board;
 using Data.Position;
 using Data.Vector;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,11 +16,13 @@ namespace Application
         private readonly Timer _timer;
 
         private readonly IDataSimulation _dataSimulation;
+        private readonly ILogger<ApplicationSimulation> _logger;
 
-        public ApplicationSimulation()
+        public ApplicationSimulation(ILogger<ApplicationSimulation> logger, IDataSimulation dataSimulation)
         {
+            _logger = logger;
+            _dataSimulation = dataSimulation;
             _timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-            _dataSimulation = new DataSimulation();
         }
         public IBoard Board { get; set; } = new DefaultBoard();
 

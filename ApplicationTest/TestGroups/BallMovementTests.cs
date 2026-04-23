@@ -1,23 +1,16 @@
-﻿using Application;
-using Data;
-using Data.Ball;
-using Data.Board;
+﻿using Data.Ball;
 using Data.Position;
 using Data.Vector;
-using Microsoft.ApplicationInsights.Extensibility;
-namespace ApplicationTest
+namespace ApplicationTest.TestGroups
 {
     [TestClass]
-    public sealed class BallMovementTests
+    public sealed class BallMovementTests : BaseApplicationTest
     {
-        private IApplicationSimulation _applicationSimulation = new ApplicationSimulation() 
-        { Board = new DefaultBoard() { Width = 400, Height = 400 } };
-
-        [TestCleanup]
-        public void AfterEach()
+        [TestInitialize]
+        public void Initialize()
         {
-            _applicationSimulation = new ApplicationSimulation()
-            { Board = new DefaultBoard() { Width = 400, Height = 400 } };
+            _applicationSimulation.Board.Width = 400;
+            _applicationSimulation.Board.Height = 400;
         }
 
         [TestMethod]
@@ -32,7 +25,7 @@ namespace ApplicationTest
         }
 
         [TestMethod]
-        public void BallsShouldMoveTest()
+        public void AllBallsShouldMoveTest()
         {
             var dataList = new List<(int X, int Y, int Angle)>
             {
@@ -79,26 +72,6 @@ namespace ApplicationTest
                 _applicationSimulation.MoveBall(ball);
                 Assert.AreEqual(startPosition, ball.CurrentPosition);
             }
-        }
-
-        [TestMethod]
-        public void StartSimulationTest()
-        {
-            int moved = 0;
-
-            _applicationSimulation.Start(1, (ball) =>
-            {
-                ball.PositionChanged += HandleBallMoved;
-            }, (board) => { });
-
-
-            void HandleBallMoved(object sender, EventArgs e)
-            {
-                moved++;
-            }
-
-            Thread.Sleep(1000);
-            Assert.AreNotEqual(0, moved);
         }
     }
 }

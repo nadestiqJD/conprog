@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationTest
+namespace DataTest.TestGroups.Ball
 {
     [TestClass]
-    public sealed class SimulationLoopTests
+    public sealed class AngleBallTests
     {
         [TestMethod]
         public void TestMethod1()
         {
+
         }
     }
 }

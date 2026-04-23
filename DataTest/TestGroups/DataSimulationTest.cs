@@ -1,25 +1,23 @@
 ﻿using Data;
 using Data.Board;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataTest
+namespace DataTest.TestGroups
 {
     [TestClass]
-    public class DataSimulationTest
+    public class DataSimulationTest : BaseDataTest
     {
-        private readonly IDataSimulation simulation = new DataSimulation();
-
-
         [TestMethod]
-        public void BallsCreatesInBoardTest()
+        public void BallsAreCreatedInBoardTest()
         {
             IBoard board = new DefaultBoard { Width = 400, Height = 400};
 
             Assert.IsEmpty(board.Balls);
 
-            simulation.CreateBallInBoard(board);
+            _dataSimulation.CreateBallInBoard(board);
 
             Assert.HasCount(1, board.Balls);
         }
