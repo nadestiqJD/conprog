@@ -33,8 +33,36 @@ namespace Data
                     new AngleVector(random.Next(5, 11) / 10.0 * _velocity, random.Next(0, 361)),
                     _radius
                 );
-            board.Balls.Add(ball);
+            AddBallToBoard(board, ball);
+
+            _logger.LogTrace("Ball {} created in board {}", ball, board);
             return ball;
+        }
+
+        public void RemoveBallFromBoard(IBoard board, IBall ball)
+        {
+            board.Balls.Remove(ball);
+            ball.Board = null;
+
+            _logger.LogTrace("Ball {} removed from {}", ball, board);
+        }
+
+        public void AddBallToBoard(IBoard board, IBall ball)
+        {
+            board.Balls.Add(ball);
+            ball.Board = board;
+
+            _logger.LogTrace("Ball {} added to {}", ball, board);
+        }
+
+        public void DisposeBoard(IBoard board)
+        {
+            foreach (var ball in board.Balls)
+            {
+                ball.Board = null;
+            }
+            board.Balls.Clear();
+            _logger.LogTrace("Board {} disposed", board);
         }
     }
 }

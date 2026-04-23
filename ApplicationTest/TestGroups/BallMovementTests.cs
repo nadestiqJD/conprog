@@ -1,4 +1,5 @@
 ﻿using Data.Ball;
+using Data.Board;
 using Data.Position;
 using Data.Vector;
 namespace ApplicationTest.TestGroups
@@ -6,27 +7,29 @@ namespace ApplicationTest.TestGroups
     [TestClass]
     public sealed class BallMovementTests : BaseApplicationTest
     {
-        [TestInitialize]
-        public void Initialize()
-        {
-            _applicationSimulation.Board.Width = 400;
-            _applicationSimulation.Board.Height = 400;
-        }
 
         [TestMethod]
-        public void BallShouldMoveTest()
+        public void BallShouldMoveIfInBoardTest()
         {
             IPosition startPosition = new DefaultPosition { X = 200, Y = 200 };
             IPosition expectedPosition = new DefaultPosition { X = 201, Y = 200 };
             IVector vector = new AngleVector(1, 0);
             IBall ball = new AngleBall(startPosition, vector, 1);
-            _applicationSimulation.MoveBall(ball);
+
+            Assert.IsFalse(_applicationSimulation.MoveBall(ball));
+            Assert.AreEqual(startPosition, ball.CurrentPosition);
+
+            IBoard board = new DefaultBoard();
+            _dataSimulation.AddBallToBoard(board, ball);
+
+            Assert.IsTrue(_applicationSimulation.MoveBall(ball));
             Assert.AreEqual(expectedPosition, ball.CurrentPosition);
         }
 
         [TestMethod]
         public void AllBallsShouldMoveTest()
         {
+            IBoard board = new DefaultBoard() { Width = 400, Height = 400 };
             var dataList = new List<(int X, int Y, int Angle)>
             {
                 (100, 100, 0),
@@ -44,9 +47,9 @@ namespace ApplicationTest.TestGroups
                 startingPositions.Add(ball, startPosition);
             }
 
-            _applicationSimulation.MoveAllBallsInBoard(_applicationSimulation.Board);
+            _applicationSimulation.MoveAllBallsInBoard(board);
 
-            foreach (var ball in _applicationSimulation.Board.Balls)
+            foreach (var ball in board.Balls)
             {
                 Assert.AreNotEqual(startingPositions.Where(x => x.Key==ball).FirstOrDefault().Value, ball.CurrentPosition );
             }
@@ -54,24 +57,29 @@ namespace ApplicationTest.TestGroups
         }
 
         [TestMethod]
-        public void BallStopWhenHitWallTest()
+        [DataRow(397, 200, 398, 200, 0)]
+        [DataRow(1, 200, 0, 200, 180)]
+        [DataRow(200, 397, 200, 398, 90)]
+        [DataRow(200, 1, 200, 0, 270)]
+        public void BallStopWhenHitWallTest(int startX, int startY, int endX, int endY, int angle)
         {
-            var dataList = new List<(int X, int Y, int Angle)>
-            {
-                (392, 200, 0),
-                (0, 200, 180),
-                (200, 392, 90),
-                (200, 0, 270)
-            };
+            IBoard board = new DefaultBoard() { Width = 400, Height = 400 };
 
-            foreach (var item in dataList)
-            {
-                IPosition startPosition = new DefaultPosition { X = item.X, Y = item.Y };
-                IVector vector = new AngleVector(1, item.Angle);
-                IBall ball = new AngleBall(startPosition, vector, 1);
-                _applicationSimulation.MoveBall(ball);
-                Assert.AreEqual(startPosition, ball.CurrentPosition);
-            }
+            IPosition startPosition = new DefaultPosition { X = startX, Y = startY };
+            IPosition endPosition = new DefaultPosition { X = endX, Y = endY };
+
+            IVector vector = new AngleVector(1, angle);
+            IBall ball = new AngleBall(startPosition, vector, radius: 1);
+
+            _dataSimulation.AddBallToBoard(board, ball);
+
+            Assert.AreEqual(startPosition, ball.CurrentPosition);
+
+            Assert.IsTrue(_applicationSimulation.MoveBall(ball));
+            Assert.AreEqual(endPosition, ball.CurrentPosition);
+
+            Assert.IsFalse(_applicationSimulation.MoveBall(ball));
+            Assert.AreEqual(endPosition, ball.CurrentPosition);
         }
     }
 }

@@ -8,12 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
 
-    <!--
-    <Window.DataContext>
-        <vm:MainViewModel />
-    </Window.DataContext>
--->
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -30,6 +24,10 @@
             <Button Content="START" 
                     Command="{Binding StartCommand}" 
                     Padding="20,5" Background="LightGreen"/>
+
+            <Button Content="STOP" 
+                    Command="{Binding StopCommand}" 
+                    Padding="20,5" Background="LightCoral"/>
         </StackPanel>
 
         <Border Grid.Row="1" 
@@ -43,7 +41,6 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 ClipToBounds="True">
-
             <ItemsControl ItemsSource="{Binding Balls}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

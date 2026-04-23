@@ -11,6 +11,7 @@ namespace ApplicationTest
         private IServiceScope _serviceScope;
 
         protected IApplicationSimulation _applicationSimulation;
+        protected IDataSimulation _dataSimulation;
 
         [TestInitialize]
         public void Setup()
@@ -26,6 +27,7 @@ namespace ApplicationTest
             _serviceScope = _serviceProvider.CreateScope();
 
             _applicationSimulation = _serviceScope.ServiceProvider.GetRequiredService<IApplicationSimulation>();
+            _dataSimulation = _serviceScope.ServiceProvider.GetRequiredService<IDataSimulation>();
         }
 
         [TestInitialize]
@@ -33,12 +35,6 @@ namespace ApplicationTest
         {
             _serviceScope?.Dispose();
             _serviceProvider?.Dispose();
-        }
-
-        [TestCleanup]
-        public void AfterEach()
-        {
-            _applicationSimulation.Board.Balls.Clear();
         }
     }
 }

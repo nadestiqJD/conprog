@@ -11,13 +11,14 @@ namespace Application
         // Start simmulation for given amount of Balls.
         void Start(int ballCount, Action<IBall> ballCreationCallback, Action<IBoard> boardCreationCallback);
 
+        void Stop();
+
         // Calculates and sets new position for Ball.
         bool MoveBall(IBall ball);
 
         // Calculates and sets new position for each Ball in Board.
         void MoveAllBallsInBoard(IBoard board);
 
-        IBoard Board { get; }
-
+        void SetBoardDimenstions(int width, int height);
     }
 }

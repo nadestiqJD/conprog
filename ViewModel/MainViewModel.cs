@@ -10,18 +10,21 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace ViewModel
 {
     public class MainViewModel : ObservableObject
     {
 
+        private readonly ILogger _logger;
         private readonly IApplicationSimulation _applicationSimulation;
 
         public ObservableCollection<IBallModel> Balls { get; private set; } = new ObservableCollection<IBallModel>();
 
-        public IBoardModel Board { get; private set; } = new BoardModel(new DefaultBoard());
+        public IBoardModel? Board { get; private set; } = new BoardModel(new DefaultBoard());
 
+        #region BallCount
         private int _ballCount = 10;
         public int BallCount
         {
@@ -35,21 +38,35 @@ namespace ViewModel
                 }
             }
         }
+        #endregion
 
         public ICommand StartCommand { get; }
+        public ICommand StopCommand { get; }
 
-        public MainViewModel(IApplicationSimulation applicationSimulation)
+        public MainViewModel(ILogger<MainViewModel> logger, IApplicationSimulation applicationSimulation)
         {
+            _logger = logger;
             _applicationSimulation = applicationSimulation;
 
             StartCommand = new RelayCommand<object>(_ => StartSimulation());
+            StopCommand = new RelayCommand<object>(_ => StopSimulation());
         }
 
         private void StartSimulation()
         {
-            Balls.Clear();
+            if (BallCount == 0)
+            {
+                _logger.LogWarning("Cannot start simulation with zero balls.");
+                return;
+            }
 
+            Balls.Clear();
             _applicationSimulation.Start(BallCount, HandleBallCreation, (board) => Board = new BoardModel(board));
+        }
+
+        private void StopSimulation()
+        {
+            _applicationSimulation.Stop();
         }
 
         private void HandleBallCreation(IBall ball)

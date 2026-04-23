@@ -30,6 +30,7 @@ namespace Data.Ball
         public int Radius { get; }
 
         public IVector Vector { get; set; }
+        public IBoard? Board { get; set; }
 
         public AngleBall(IPosition currentPosition, IVector vector, int radius)
         {

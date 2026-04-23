@@ -10,14 +10,16 @@ namespace Model.Board
     public class BoardModel : ObservableObject, IBoardModel
     {
         private readonly IBoard _board;
+
+        private static readonly int _boardBorderPadding = 6;
         public int Width
         {
-            get => _board.Width;
+            get => _board.Width + _boardBorderPadding;
         }
 
         public int Height 
         {
-            get => _board.Height;
+            get => _board.Height + _boardBorderPadding;
         }
 
         public BoardModel(IBoard board)

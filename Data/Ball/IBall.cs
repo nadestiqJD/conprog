@@ -1,4 +1,5 @@
-﻿using Data.Position;
+﻿using Data.Board;
+using Data.Position;
 using Data.Vector;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,7 @@ namespace Data.Ball
         int Radius { get; }
 
         IVector Vector { get; set; }
+
+        IBoard? Board { get; set; }
     }
 }
