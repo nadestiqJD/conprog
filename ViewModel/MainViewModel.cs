@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Data;
 
 namespace ViewModel
 {
@@ -43,15 +44,18 @@ namespace ViewModel
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
 
-        public MainViewModel(ILogger<MainViewModel> logger, IApplicationSimulation applicationSimulation)
+        public MainViewModel(IApplicationSimulation applicationSimulation)
         {
-            _logger = logger;
             _applicationSimulation = applicationSimulation;
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            _logger = loggerFactory.CreateLogger<MainViewModel>();
 
             StartCommand = new RelayCommand<object>(_ => StartSimulation());
             StopCommand = new RelayCommand<object>(_ => StopSimulation());
         }
 
+        public MainViewModel() : this(new ApplicationSimulation(new DataSimulation())) { }
+        
         private void StartSimulation()
         {
             if (BallCount == 0)

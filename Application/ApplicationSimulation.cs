@@ -13,14 +13,15 @@ namespace Application
 {
     public class ApplicationSimulation : IApplicationSimulation
     {
-        private Timer _timer;
+        private Timer? _timer;
 
         private readonly IDataSimulation _dataSimulation;
         private readonly ILogger<ApplicationSimulation> _logger;
 
-        public ApplicationSimulation(ILogger<ApplicationSimulation> logger, IDataSimulation dataSimulation)
+        public ApplicationSimulation(IDataSimulation dataSimulation)
         {
-            _logger = logger;
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            _logger = loggerFactory.CreateLogger<ApplicationSimulation>();
             _dataSimulation = dataSimulation;
         }
         private IBoard Board { get; set; } = new DefaultBoard();

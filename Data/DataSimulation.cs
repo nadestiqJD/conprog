@@ -17,9 +17,10 @@ namespace Data
         private static readonly double _velocity = _radius * 0.8;
         private readonly ILogger<DataSimulation> _logger;
 
-        public DataSimulation(ILogger<DataSimulation> logger)
+        public DataSimulation()
         {
-            _logger = logger;
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            _logger = loggerFactory.CreateLogger<DataSimulation>();
         }
 
         public IBall CreateBallInBoard(IBoard board)

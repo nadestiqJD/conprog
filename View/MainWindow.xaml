@@ -11,6 +11,10 @@
         MinHeight="700" MinWidth="900"
         >
 
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
