@@ -20,10 +20,20 @@ namespace ViewModel
 
         private readonly ILogger _logger;
         private readonly IApplicationSimulation _applicationSimulation;
+        private IBoardModel _boardModel;
 
         public ObservableCollection<IBallModel> Balls { get; private set; } = new ObservableCollection<IBallModel>();
 
-        public IBoardModel? Board { get; private set; } = new BoardModel(new DefaultBoard());
+        public IBoardModel? Board 
+        { 
+            get => _boardModel; 
+            private set
+            {
+                _boardModel = value;
+                RaisePropertyChanged();
+            } 
+        
+        }
 
         #region BallCount
         private int _ballCount = 10;

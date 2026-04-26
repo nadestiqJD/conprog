@@ -111,10 +111,13 @@ namespace Application
 
         public void Stop()
         {
-            _timer.Dispose();
-            _dataSimulation.DisposeBoard(Board);
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _dataSimulation.DisposeBoard(Board);
 
-            _logger.LogInformation("Simulation stopped");
+                _logger.LogInformation("Simulation stopped");
+            }
         }
 
         private void MoveTask(object? _)
