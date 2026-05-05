@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Data;
 
 namespace ViewModel
 {
@@ -19,10 +20,20 @@ namespace ViewModel
 
         private readonly ILogger _logger;
         private readonly IApplicationSimulation _applicationSimulation;
+        private IBoardModel _boardModel;
 
         public ObservableCollection<IBallModel> Balls { get; private set; } = new ObservableCollection<IBallModel>();
 
-        public IBoardModel? Board { get; private set; } = new BoardModel(new DefaultBoard());
+        public IBoardModel? Board 
+        { 
+            get => _boardModel; 
+            private set
+            {
+                _boardModel = value;
+                RaisePropertyChanged();
+            } 
+        
+        }
 
         #region BallCount
         private int _ballCount = 10;
@@ -43,15 +54,18 @@ namespace ViewModel
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
 
-        public MainViewModel(ILogger<MainViewModel> logger, IApplicationSimulation applicationSimulation)
+        public MainViewModel(IApplicationSimulation applicationSimulation)
         {
-            _logger = logger;
             _applicationSimulation = applicationSimulation;
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            _logger = loggerFactory.CreateLogger<MainViewModel>();
 
             StartCommand = new RelayCommand<object>(_ => StartSimulation());
             StopCommand = new RelayCommand<object>(_ => StopSimulation());
         }
 
+        public MainViewModel() : this(new ApplicationSimulation(new DataSimulation())) { }
+        
         private void StartSimulation()
         {
             if (BallCount == 0)

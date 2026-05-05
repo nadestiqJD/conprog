@@ -13,16 +13,15 @@ namespace Application
 {
     public class ApplicationSimulation : IApplicationSimulation
     {
-        private readonly uint _refreshRate = 60;
-
         private Timer _timer;
 
         private readonly IDataSimulation _dataSimulation;
         private readonly ILogger<ApplicationSimulation> _logger;
 
-        public ApplicationSimulation(ILogger<ApplicationSimulation> logger, IDataSimulation dataSimulation)
+        public ApplicationSimulation(IDataSimulation dataSimulation)
         {
-            _logger = logger;
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            _logger = loggerFactory.CreateLogger<ApplicationSimulation>();
             _dataSimulation = dataSimulation;
         }
         private IBoard Board { get; set; } = new DefaultBoard();
@@ -134,10 +133,13 @@ namespace Application
 
         public void Stop()
         {
-            _timer.Dispose();
-            _dataSimulation.DisposeBoard(Board);
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _dataSimulation.DisposeBoard(Board);
 
-            _logger.LogInformation("Simulation stopped");
+                _logger.LogInformation("Simulation stopped");
+            }
         }
 
         private void MoveTask(object? _)
