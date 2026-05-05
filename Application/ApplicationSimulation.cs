@@ -13,7 +13,8 @@ namespace Application
 {
     public class ApplicationSimulation : IApplicationSimulation
     {
-        private Timer _timer;
+        private readonly uint _refreshRate = 60;
+        private Timer? _timer;
 
         private readonly IDataSimulation _dataSimulation;
         private readonly ILogger<ApplicationSimulation> _logger;
