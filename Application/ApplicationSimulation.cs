@@ -13,6 +13,8 @@ namespace Application
 {
     public class ApplicationSimulation : IApplicationSimulation
     {
+        private readonly uint _refreshRate = 60;
+
         private Timer _timer;
 
         private readonly IDataSimulation _dataSimulation;
@@ -31,60 +33,81 @@ namespace Application
 
             foreach (var ball in board.Balls)
             {
-                if (!MoveBall(ball))
-                { 
-                    toRemove.Add(ball);
-                    _logger.LogInformation("Ball {} collided with wall", ball);
-                };
-            }
-
-            foreach (var ball in toRemove)
-            {
-                _dataSimulation.RemoveBallFromBoard(board, ball);
+                MoveBall(ball);
             }
         }
 
-        public bool MoveBall(IBall ball)
+        public void MoveBall(IBall ball)
         {
             if (ball.Board == null)
             {
                 _logger.LogWarning("Ball is not in a board, cannot move");
-                return false;
+                return;
             }
 
+            HandleWallCollision(ball);
+        }
+
+        private void HandleWallCollision(IBall ball)
+        {
             double validatedX;
             double validatedY;
 
-            bool continueMoving = true;
-
             IPosition positionDelta = ball.Vector.GetDelta();
 
-            IPosition newPosition = new DefaultPosition { X = positionDelta.X + ball.CurrentPosition.X, Y = positionDelta.Y + ball.CurrentPosition.Y};
+            IPosition newPosition = new DefaultPosition
+            {
+                X = positionDelta.X + ball.CurrentPosition.X,
+                Y = positionDelta.Y + ball.CurrentPosition.Y
+            };
+            IVector newVector = ball.Vector;
 
-            if (newPosition.X + 2 * ball.Radius > ball.Board.Width)
+            double rightBorder = ball.Board.Width - ball.Radius;
+            double bottomBorder = ball.Board.Height - ball.Radius;
+            double leftBorder = ball.Radius;
+            double upperBorder = ball.Radius;
+
+            if (newPosition.X > rightBorder)
             {
-                validatedX = ball.Board.Width - 2 * ball.Radius;
-                continueMoving = false;
+                validatedX = rightBorder - (newPosition.X - rightBorder);
+                newVector = new AngleVector
+                {
+                    Angle = (180 - ball.Vector.Angle) % 360,
+                    Length = ball.Vector.Length
+                };
+
             }
-            else if (newPosition.X < 0)
+            else if (newPosition.X < leftBorder)
             {
-                validatedX = 0;
-                continueMoving = false;
+                validatedX = leftBorder - (newPosition.X - leftBorder);
+                newVector = new AngleVector
+                {
+                    Angle = (180 - ball.Vector.Angle) % 360,
+                    Length = ball.Vector.Length
+                };
             }
             else
             {
                 validatedX = newPosition.X;
             }
 
-            if (newPosition.Y + 2 * ball.Radius > ball.Board.Height)
+            if (newPosition.Y > bottomBorder)
             {
-                validatedY = ball.Board.Height - 2 * ball.Radius;
-                continueMoving = false;
+                validatedY = ball.Board.Height - ball.Radius;
+                newVector = new AngleVector
+                {
+                    Angle = (-ball.Vector.Angle) % 360,
+                    Length = ball.Vector.Length
+                };
             }
-            else if (newPosition.Y < 0)
+            else if (newPosition.Y < upperBorder)
             {
-                validatedY = 0;
-                continueMoving = false;
+                validatedY = ball.Radius;
+                newVector = new AngleVector
+                {
+                    Angle = (-ball.Vector.Angle) % 360,
+                    Length = ball.Vector.Length
+                };
             }
             else
             {
@@ -92,9 +115,10 @@ namespace Application
             }
 
             ball.CurrentPosition = new DefaultPosition { X = validatedX, Y = validatedY };
-
-            return continueMoving;
+            ball.Vector = newVector;
         }
+
+        #region Simulation
 
         public void Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
         {
@@ -104,7 +128,7 @@ namespace Application
             }
             boardCallBack(Board);
 
-            _timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+            _timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000/_refreshRate));
             _logger.LogInformation("Simulation started with {ballCount} balls", ballCount);
         }
 
@@ -129,5 +153,6 @@ namespace Application
             _logger.LogInformation("Board dimensions in simulation set to {}x{}", width, height);
         }
 
+        #endregion
     }
 }

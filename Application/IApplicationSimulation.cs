@@ -14,7 +14,7 @@ namespace Application
         void Stop();
 
         // Calculates and sets new position for Ball.
-        bool MoveBall(IBall ball);
+        void MoveBall(IBall ball);
 
         // Calculates and sets new position for each Ball in Board.
         void MoveAllBallsInBoard(IBoard board);

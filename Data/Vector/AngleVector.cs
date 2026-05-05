@@ -7,27 +7,29 @@ namespace Data.Vector
 {
     public class AngleVector : IVector
     {
-        public double Velocity { get; private set; }
-        public int Angle { get; private set; }
+        public double Length { get; set; }
+        public int Angle { get; set; }
         public IPosition AddToPosition(IPosition oldPosition)
         {
             double rad = Angle * (Math.PI / 180.0);
-            return new DefaultPosition {X = oldPosition.X + Math.Cos(rad) * Velocity, Y = oldPosition.Y + Math.Sin(rad) * Velocity}; 
+            return new DefaultPosition {X = oldPosition.X + Math.Cos(rad) * Length, Y = oldPosition.Y + Math.Sin(rad) * Length}; 
         }
 
-        public AngleVector(double velocity, int angle)
+        public AngleVector(double length, int angle)
         {
-            Velocity = velocity;
+            Length = length;
             Angle = angle;
         }
+
+        public AngleVector() { }
 
         public IPosition GetDelta()
         {
             double rad = Angle * (Math.PI / 180.0);
             return new DefaultPosition
             {
-                X = Math.Cos(rad) * Velocity,
-                Y = Math.Sin(rad) * Velocity
+                X = Math.Cos(rad) * Length,
+                Y = Math.Sin(rad) * Length
             };
         }
     }

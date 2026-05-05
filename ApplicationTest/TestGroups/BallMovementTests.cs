@@ -14,7 +14,7 @@ namespace ApplicationTest.TestGroups
             IPosition startPosition = new DefaultPosition { X = 200, Y = 200 };
             IPosition expectedPosition = new DefaultPosition { X = 201, Y = 200 };
             IVector vector = new AngleVector(1, 0);
-            IBall ball = new AngleBall(startPosition, vector, 1);
+            IBall ball = new AngleBall { CurrentPosition = startPosition, Vector = vector, Radius = 1, Weight = 0 };
 
             Assert.IsFalse(_applicationSimulation.MoveBall(ball));
             Assert.AreEqual(startPosition, ball.CurrentPosition);
@@ -43,7 +43,7 @@ namespace ApplicationTest.TestGroups
             {
                 IPosition startPosition = new DefaultPosition { X = item.X, Y = item.Y };
                 IVector vector = new AngleVector(1, item.Angle);
-                IBall ball = new AngleBall(startPosition, vector, 1);
+                IBall ball = new AngleBall { CurrentPosition = startPosition, Vector = vector, Radius = 1, Weight = 0 };
                 startingPositions.Add(ball, startPosition);
             }
 
@@ -69,7 +69,7 @@ namespace ApplicationTest.TestGroups
             IPosition endPosition = new DefaultPosition { X = endX, Y = endY };
 
             IVector vector = new AngleVector(1, angle);
-            IBall ball = new AngleBall(startPosition, vector, radius: 1);
+            IBall ball = new AngleBall { CurrentPosition = startPosition, Vector = vector, Radius = 1, Weight = 0 };
 
             _dataSimulation.AddBallToBoard(board, ball);
 

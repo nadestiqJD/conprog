@@ -20,7 +20,12 @@ namespace Model.Ball
 
         public IPosition CurrentPosition
         {
-            get => _ball.CurrentPosition; 
+            //get => _ball.CurrentPosition; 
+            get => new DefaultPosition
+            {
+                X = _ball.CurrentPosition.X - _ball.Radius,
+                Y = _ball.CurrentPosition.Y - _ball.Radius
+            }; 
         }
 
         public int Diameter { get => _ball.Radius * 2; }

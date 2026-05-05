@@ -5,6 +5,7 @@ using Data.Vector;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Data
@@ -24,15 +25,18 @@ namespace Data
 
         public IBall CreateBallInBoard(IBoard board)
         {
-            IBall ball = new AngleBall(
-                    new DefaultPosition
-                    {
-                        X = random.Next(0 + 2 * _radius, board.Width - 2 * _radius),
-                        Y = random.Next(0 + 2 * _radius, board.Height - 2 * _radius)
-                    },
-                    new AngleVector(random.Next(5, 11) / 10.0 * _velocity, random.Next(0, 361)),
-                    _radius
-                );
+            
+            IBall ball = new AngleBall
+            {
+                CurrentPosition = new DefaultPosition
+                {
+                    X = random.Next(0 + 2 * _radius, board.Width - 2 * _radius),
+                    Y = random.Next(0 + 2 * _radius, board.Height - 2 * _radius)
+                },
+                Vector = new AngleVector(random.Next(5, 11) / 10.0 * _velocity, random.Next(0, 361)),
+                Radius = _radius,
+                Weight = 0
+            };
             AddBallToBoard(board, ball);
 
             _logger.LogTrace("Ball {} created in board {}", ball, board);

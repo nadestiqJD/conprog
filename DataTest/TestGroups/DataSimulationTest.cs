@@ -29,7 +29,12 @@ namespace DataTest.TestGroups
         public void AddBallToBoardTest()
         {
             IBoard board = new DefaultBoard();
-            IBall ball = new AngleBall(new DefaultPosition { X = 100, Y = 100 }, new AngleVector(1, 0), 1);
+            IBall ball = new AngleBall
+            {
+                CurrentPosition = new DefaultPosition { X = 100, Y = 100 },
+                Vector = new AngleVector(1, 0),
+                Radius = 1
+            };
 
             Assert.IsEmpty(board.Balls);
             Assert.IsNull(ball.Board);
@@ -45,7 +50,13 @@ namespace DataTest.TestGroups
         public void RemoveBallFromBoardTest()
         {
             IBoard board = new DefaultBoard();
-            IBall ball = new AngleBall(new DefaultPosition { X = 100, Y = 100 }, new AngleVector(1, 0), 1);
+            
+            IBall ball = new AngleBall
+            {
+                CurrentPosition = new DefaultPosition { X = 100, Y = 100 },
+                Vector = new AngleVector(1, 0),
+                Radius = 1
+            };
 
             board.Balls.Add(ball);
             ball.Board = board;

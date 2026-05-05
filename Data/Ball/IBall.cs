@@ -17,6 +17,8 @@ namespace Data.Ball
 
         IVector Vector { get; set; }
 
+        int Weight { get; }
+
         IBoard? Board { get; set; }
     }
 }

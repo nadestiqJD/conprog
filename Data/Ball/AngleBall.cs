@@ -27,19 +27,13 @@ namespace Data.Ball
             }
         }
 
-        public int Radius { get; }
+        public int Radius { get; set; }
+
+        public int Weight { get; set; }
 
         public IVector Vector { get; set; }
         public IBoard? Board { get; set; }
 
-        public AngleBall(IPosition currentPosition, IVector vector, int radius)
-        {
-            Radius = radius;
-            Vector = vector;
-            CurrentPosition = currentPosition;
-        }
+        public AngleBall() { }
     }
-
-
-
 }
