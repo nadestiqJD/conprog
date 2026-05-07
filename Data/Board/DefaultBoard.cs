@@ -7,7 +7,7 @@ namespace Data.Board
 {
     public class DefaultBoard : IBoard
     {
-        private int _width = 750;
+        private int _width;
         public int Width
         {
             get => _width;
@@ -19,7 +19,7 @@ namespace Data.Board
         }
 
 
-        private int _height = 550;
+        private int _height;
         public int Height { 
             get => _height; 
             set

@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Data;
+using System.Threading.Tasks;
 
 namespace ViewModel
 {
@@ -66,7 +67,7 @@ namespace ViewModel
 
         public MainViewModel() : this(new ApplicationSimulation(new DataSimulation())) { }
         
-        private void StartSimulation()
+        private async Task StartSimulation()
         {
             if (BallCount == 0)
             {
@@ -75,12 +76,12 @@ namespace ViewModel
             }
 
             Balls.Clear();
-            _applicationSimulation.Start(BallCount, HandleBallCreation, (board) => Board = new BoardModel(board));
+            await _applicationSimulation.Start(BallCount, HandleBallCreation, (board) => Board = new BoardModel(board));
         }
 
-        private void StopSimulation()
+        private async Task StopSimulation()
         {
-            _applicationSimulation.Stop();
+            await _applicationSimulation.Stop();
         }
 
         private void HandleBallCreation(IBall ball)

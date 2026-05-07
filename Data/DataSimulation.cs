@@ -15,7 +15,7 @@ namespace Data
         readonly Random random = new Random();
 
         private static readonly int _radius = 10;
-        private static readonly double _velocity = _radius * 0.8;
+        private static readonly double _velocity = _radius * 0.4;
         private readonly ILogger<DataSimulation> _logger;
 
         public DataSimulation()
@@ -36,7 +36,7 @@ namespace Data
                 },
                 Vector = new AngleVector(random.Next(5, 11) / 10.0 * _velocity, random.Next(0, 361)),
                 Radius = _radius,
-                Weight = 0
+                Weight = random.Next(5, 11)
             };
             AddBallToBoard(board, ball);
 
@@ -68,6 +68,11 @@ namespace Data
             }
             board.Balls.Clear();
             _logger.LogTrace("Board {} disposed", board);
+        }
+
+        public IBoard CreateBoard(int width, int height)
+        {
+            return new DefaultBoard() { Width = width, Height = height };
         }
     }
 }

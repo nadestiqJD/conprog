@@ -3,21 +3,16 @@ using Data.Board;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Application
 {
     public interface IApplicationSimulation
     {
         // Start simmulation for given amount of Balls.
-        void Start(int ballCount, Action<IBall> ballCreationCallback, Action<IBoard> boardCreationCallback);
+        Task Start(int ballCount, Action<IBall> ballCreationCallback, Action<IBoard> boardCreationCallback);
 
-        void Stop();
-
-        // Calculates and sets new position for Ball.
-        void MoveBall(IBall ball);
-
-        // Calculates and sets new position for each Ball in Board.
-        void MoveAllBallsInBoard(IBoard board);
+        Task Stop();
 
         void SetBoardDimenstions(int width, int height);
     }

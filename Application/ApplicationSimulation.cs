@@ -6,8 +6,10 @@ using Data.Vector;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Application
 {
@@ -15,6 +17,7 @@ namespace Application
     {
         private readonly uint _refreshRate = 60;
         private Timer? _timer;
+        private readonly object _ballMovementLock = new object();
 
         private readonly IDataSimulation _dataSimulation;
         private readonly ILogger<ApplicationSimulation> _logger;
@@ -25,27 +28,67 @@ namespace Application
             _logger = loggerFactory.CreateLogger<ApplicationSimulation>();
             _dataSimulation = dataSimulation;
         }
-        private IBoard Board { get; set; } = new DefaultBoard();
 
-        public void MoveAllBallsInBoard(IBoard board)
-        {   
-            List<IBall> toRemove = new List<IBall>(); 
-
-            foreach (var ball in board.Balls)
+        #region Board property
+        private IBoard _board;
+        private IBoard Board 
+        { 
+            get 
             {
-                MoveBall(ball);
+                lock (_ballMovementLock)
+                {
+                    return _board;
+                }
             }
+            set
+            {
+                lock (_ballMovementLock)
+                {
+                    _board = value;
+                }
+            }
+
+        }
+        #endregion
+
+        public void SetBoardDimenstions(int width, int height)
+        {
+            Board.Width = width;
+            Board.Height = height;
+            _logger.LogInformation("Board dimensions in simulation set to {}x{}", width, height);
         }
 
-        public void MoveBall(IBall ball)
-        {
-            if (ball.Board == null)
-            {
-                _logger.LogWarning("Ball is not in a board, cannot move");
-                return;
-            }
+        
 
-            HandleWallCollision(ball);
+        private bool CheckBallsCollision(IBall b1, IBall b2)
+        {
+            bool positionsOverlap = (b1.CurrentPosition.X - b2.CurrentPosition.X) * (b1.CurrentPosition.X - b2.CurrentPosition.X)
+                + (b1.CurrentPosition.Y - b2.CurrentPosition.Y) * (b1.CurrentPosition.Y - b2.CurrentPosition.Y)
+                < b1.Radius + b2.Radius;
+
+            // balls go in the same or almost same direction and ball from behind is faster, or balls are approaching head on
+            bool generalDirectionOverlaps = true;
+
+            return positionsOverlap && generalDirectionOverlaps;
+        }
+
+        private void HandleBallsCollision(IBall b1, IBall b2)
+        {
+            // this method assumes that b1 and b2 are colliding and only changes vectors of both balls according to
+            // https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
+            //throw new NotImplementedException();
+
+            // be advised that code below is for experimental purposes only and is not intended to use in production
+            b1.Vector = new AngleVector
+            {
+                Angle = (180 + b1.Vector.Angle) % 360,
+                Length = b1.Vector.Length
+            };
+            b2.Vector = new AngleVector
+            {
+                Angle = (180 + b2.Vector.Angle) % 360,
+                Length = b2.Vector.Length
+            };
         }
 
         private void HandleWallCollision(IBall ball)
@@ -120,8 +163,13 @@ namespace Application
 
         #region Simulation
 
-        public void Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
+        public async Task Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
         {
+            await Stop();
+            lock (_ballMovementLock)
+            {
+                Board = _dataSimulation.CreateBoard();
+            }
             for (int i = 0; i < ballCount; i++)
             {
                 ballCallBack(_dataSimulation.CreateBallInBoard(Board));
@@ -132,7 +180,7 @@ namespace Application
             _logger.LogInformation("Simulation started with {ballCount} balls", ballCount);
         }
 
-        public void Stop()
+        public async Task Stop()
         {
             if (_timer != null)
             {
@@ -146,14 +194,30 @@ namespace Application
         private void MoveTask(object? _)
         {
             _logger.LogTrace("Simulation tick started");
-            MoveAllBallsInBoard(Board);
+
+            lock (_ballMovementLock)
+            {
+                foreach (var ball in Board.Balls)
+                {
+                    MoveBall(ball);
+                }
+            }
         }
 
-        public void SetBoardDimenstions(int width, int height)
+        public async Task MoveBall(IBall ball)
         {
-            Board.Width = width;
-            Board.Height = height;
-            _logger.LogInformation("Board dimensions in simulation set to {}x{}", width, height);
+            if (ball.Board == null)
+            {
+                _logger.LogWarning("Ball is not in a board, cannot move");
+                return;
+            }
+
+            HandleWallCollision(ball);
+
+            foreach (var otherBall in ball.Board.Balls.Where(other => CheckBallsCollision(ball, other)))
+            {
+                HandleBallsCollision(ball, otherBall);
+            }
         }
 
         #endregion

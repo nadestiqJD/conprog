@@ -1,14 +1,20 @@
 ﻿using Data.Ball;
 using Data.Position;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Model.Ball
 {
     public class BallModel : ObservableObject, IBallModel
     {
         private readonly IBall _ball;
+        private static readonly Dictionary<int, string> _ballColorsForWeight = new Dictionary<int, string>() {
+            { 5, "Red"  },
+            { 6, "Green"  },
+            { 7, "Blue"  },
+            { 8, "Purple"  },
+            { 9, "Cyan"  },
+            { 10, "RosyBrown"  },
+        }; 
 
         public BallModel(IBall ball)
         {
@@ -29,6 +35,11 @@ namespace Model.Ball
         }
 
         public int Diameter { get => _ball.Radius * 2; }
+
+        public string BallColor 
+        { 
+            get => _ballColorsForWeight[_ball.Weight];
+        }
 
         private void HandleNewPosition()
         {
