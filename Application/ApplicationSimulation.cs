@@ -58,13 +58,16 @@ namespace Application
             _logger.LogInformation("Board dimensions in simulation set to {}x{}", width, height);
         }
 
-        
-
         private bool CheckBallsCollision(IBall b1, IBall b2)
         {
+            if (b1 == b2)
+            {
+                return false;
+            }
+
             bool positionsOverlap = (b1.CurrentPosition.X - b2.CurrentPosition.X) * (b1.CurrentPosition.X - b2.CurrentPosition.X)
                 + (b1.CurrentPosition.Y - b2.CurrentPosition.Y) * (b1.CurrentPosition.Y - b2.CurrentPosition.Y)
-                < b1.Radius + b2.Radius;
+                <= (b1.Radius + b2.Radius) * (b1.Radius + b2.Radius);
 
             // balls go in the same or almost same direction and ball from behind is faster, or balls are approaching head on
             bool generalDirectionOverlaps = true;
@@ -74,21 +77,34 @@ namespace Application
 
         private void HandleBallsCollision(IBall b1, IBall b2)
         {
-            // this method assumes that b1 and b2 are colliding and only changes vectors of both balls according to
-            // https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
-            //throw new NotImplementedException();
+            var delta1 = b1.Vector.GetDelta();
+            var delta2 = b2.Vector.GetDelta();
 
-            // be advised that code below is for experimental purposes only and is not intended to use in production
-            b1.Vector = new AngleVector
-            {
-                Angle = (180 + b1.Vector.Angle) % 360,
-                Length = b1.Vector.Length
-            };
-            b2.Vector = new AngleVector
-            {
-                Angle = (180 + b2.Vector.Angle) % 360,
-                Length = b2.Vector.Length
-            };
+            double dx = b2.CurrentPosition.X - b1.CurrentPosition.X;
+            double dy = b2.CurrentPosition.Y - b1.CurrentPosition.Y;
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+            double nx = dx / distance;
+            double ny = dy / distance;
+
+            double vRelX = delta1.X - delta2.X;
+            double vRelY = delta1.Y - delta2.Y;
+
+            double vRelNormal = vRelX * nx + vRelY * ny;
+
+            if (vRelNormal < 0) return;
+
+            double m1 = b1.Weight;
+            double m2 = b2.Weight;
+            double impulse = (2.0 * vRelNormal) / (m1 + m2);
+
+            double v1x_new = delta1.X - impulse * m2 * nx;
+            double v1y_new = delta1.Y - impulse * m2 * ny;
+            double v2x_new = delta2.X + impulse * m1 * nx;
+            double v2y_new = delta2.Y + impulse * m1 * ny;
+
+            b1.Vector = CalculateNewVector(v1x_new, v1y_new);
+            b2.Vector = CalculateNewVector(v2x_new, v2y_new);
         }
 
         private void HandleWallCollision(IBall ball)
@@ -159,6 +175,19 @@ namespace Application
 
             ball.CurrentPosition = new DefaultPosition { X = validatedX, Y = validatedY };
             ball.Vector = newVector;
+        }
+
+        private IVector CalculateNewVector(double vx, double vy)
+        {
+            double newLength = Math.Sqrt(vx * vx + vy * vy);
+
+            double radians = Math.Atan2(vy, vx);
+            double degrees = radians * (180.0 / Math.PI);
+
+            int angle = ((int)Math.Round(degrees)) % 360;
+            if (angle < 0) angle += 360;
+
+            return new AngleVector { Length = newLength, Angle = angle };
         }
 
         #region Simulation
