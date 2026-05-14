@@ -23,6 +23,9 @@ namespace ViewModel
         private readonly IApplicationSimulation _applicationSimulation;
         private IBoardModel _boardModel;
 
+        private bool _applicationStarted = false;
+        private object _startLock = new object();
+
         public ObservableCollection<IBallModel> Balls { get; private set; } = new ObservableCollection<IBallModel>();
 
         public IBoardModel? Board 
@@ -61,14 +64,23 @@ namespace ViewModel
             ILoggerFactory loggerFactory = new LoggerFactory();
             _logger = loggerFactory.CreateLogger<MainViewModel>();
 
-            StartCommand = new RelayCommand<object>(_ => StartSimulation());
-            StopCommand = new RelayCommand<object>(_ => StopSimulation());
+            StartCommand = new RelayCommand<object>(async (_) => await StartSimulation());
+            StopCommand = new RelayCommand<object>(async (_) => await StopSimulation());
         }
 
         public MainViewModel() : this(new ApplicationSimulation(new DataSimulation())) { }
         
         private async Task StartSimulation()
         {
+            lock (_startLock)
+            {
+                if (_applicationStarted)
+                {
+                    return;
+                }
+                _applicationStarted = true;
+            }
+
             if (BallCount == 0)
             {
                 _logger.LogWarning("Cannot start simulation with zero balls.");
@@ -81,6 +93,14 @@ namespace ViewModel
 
         private async Task StopSimulation()
         {
+            lock (_startLock)
+            {
+                if (!_applicationStarted)
+                {
+                    return;
+                }
+                _applicationStarted = false;
+            }
             await _applicationSimulation.Stop();
         }
 

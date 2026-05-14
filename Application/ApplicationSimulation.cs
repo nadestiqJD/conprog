@@ -5,6 +5,7 @@ using Data.Position;
 using Data.Vector;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Application
 {
     public class ApplicationSimulation : IApplicationSimulation
     {
-        private readonly uint _refreshRate = 60;
+        private readonly int _refreshRate = 60;
         private Timer? _timer;
         private readonly object _ballMovementLock = new object();
 
@@ -35,17 +36,15 @@ namespace Application
         { 
             get 
             {
-                lock (_ballMovementLock)
-                {
+                
                     return _board;
-                }
+                
             }
             set
             {
-                lock (_ballMovementLock)
-                {
+
                     _board = value;
-                }
+                
             }
 
         }
@@ -192,6 +191,7 @@ namespace Application
 
         #region Simulation
 
+        private CancellationTokenSource _ballsSimulationTokenSource;
         public async Task Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
         {
             await Stop();
@@ -199,37 +199,72 @@ namespace Application
             {
                 Board = _dataSimulation.CreateBoard();
             }
+
+            _ballsSimulationTokenSource = new CancellationTokenSource();
+            var ct = _ballsSimulationTokenSource.Token;
+
+            Task ballTask;
             for (int i = 0; i < ballCount; i++)
             {
-                ballCallBack(_dataSimulation.CreateBallInBoard(Board));
+                IBall ball = _dataSimulation.CreateBallInBoard(Board);
+                //ballTask = Task.Run(async () =>
+                //{
+                //    while (true)
+                //    {
+                //        ct.ThrowIfCancellationRequested();
+
+                //        await MoveBall(ball);
+
+                //        await Task.Delay(1000 / _refreshRate, ct);
+                //    }
+                //}, ct);
+                
+                ballCallBack(ball);
+
+
+                Thread ballThread = new Thread((context) =>
+                {
+                    try
+                    {
+                        while (!ct.IsCancellationRequested)
+                        {
+                            MoveBall(ball).Wait();
+
+                            int delay = 1000 / _refreshRate;
+
+                            if (ct.WaitHandle.WaitOne(delay))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Błąd w wątku: {ex.Message}");
+                    }
+                });
+
+                ballThread.IsBackground = true;
+                ballThread.Name = "Wątek Kulki";
+                ballThread.Start();
             }
             boardCallBack(Board);
 
-            _timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000/_refreshRate));
+            //_timer = new Timer(MoveTask, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000/_refreshRate));
             _logger.LogInformation("Simulation started with {ballCount} balls", ballCount);
         }
 
         public async Task Stop()
         {
-            if (_timer != null)
+            if (_ballsSimulationTokenSource != null)
             {
-                _timer.Dispose();
+                _ballsSimulationTokenSource.Cancel();
+                _ballsSimulationTokenSource.Dispose();
+                _ballsSimulationTokenSource = null;
+
                 _dataSimulation.DisposeBoard(Board);
 
                 _logger.LogInformation("Simulation stopped");
-            }
-        }
-
-        private void MoveTask(object? _)
-        {
-            _logger.LogTrace("Simulation tick started");
-
-            lock (_ballMovementLock)
-            {
-                foreach (var ball in Board.Balls)
-                {
-                    MoveBall(ball);
-                }
             }
         }
 
