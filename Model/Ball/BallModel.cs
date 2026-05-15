@@ -19,14 +19,11 @@ namespace Model.Ball
         public BallModel(IBall ball)
         {
             _ball = ball;
-            
-            // BallModel nasłuchuje zmian położenia Ball
             _ball.PositionChanged += (sender, e) => HandleNewPosition();
         }
 
         public IPosition CurrentPosition
         {
-            //get => _ball.CurrentPosition; 
             get => new DefaultPosition
             {
                 X = _ball.CurrentPosition.X - _ball.Radius,

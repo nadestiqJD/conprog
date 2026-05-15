@@ -16,7 +16,7 @@ namespace DataTest.TestGroups
         [TestMethod]
         public void BallsAreCreatedInBoardTest()
         {
-            IBoard board = new DefaultBoard();
+            IBoard board = new DefaultBoard(500, 500);
 
             Assert.IsEmpty(board.Balls);
 
@@ -28,7 +28,7 @@ namespace DataTest.TestGroups
         [TestMethod]
         public void AddBallToBoardTest()
         {
-            IBoard board = new DefaultBoard();
+            IBoard board = new DefaultBoard(500, 500);
             IBall ball = new AngleBall
             {
                 CurrentPosition = new DefaultPosition { X = 100, Y = 100 },
@@ -49,7 +49,7 @@ namespace DataTest.TestGroups
         [TestMethod]
         public void RemoveBallFromBoardTest()
         {
-            IBoard board = new DefaultBoard();
+            IBoard board = new DefaultBoard(500, 500);
             
             IBall ball = new AngleBall
             {
@@ -68,6 +68,14 @@ namespace DataTest.TestGroups
 
             Assert.IsEmpty(board.Balls);
             Assert.IsNull(ball.Board);
+        }
+
+        [TestMethod]
+        public void CreateTooSmallBoardShouldThrowArgumentException()
+        {
+            Assert.Throws<ArgumentException>(() => _dataSimulation.CreateBoard(1, 500));
+            Assert.Throws<ArgumentException>(() => _dataSimulation.CreateBoard(500, 1));
+            Assert.Throws<ArgumentException>(() => _dataSimulation.CreateBoard(1, 1));
         }
     }
 }

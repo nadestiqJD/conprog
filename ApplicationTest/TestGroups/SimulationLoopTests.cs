@@ -1,7 +1,5 @@
-﻿using Data.Ball;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ApplicationTest.Base;
+using Data.Ball;
 
 namespace ApplicationTest.TestGroups
 {
@@ -9,8 +7,13 @@ namespace ApplicationTest.TestGroups
     public sealed class SimulationLoopTests : BaseApplicationTest
     {
         [TestMethod]
-        public void StartSimulationTest()
+        [DataRow(TestCategories.TIMER_SIMULATION)]
+        [DataRow(TestCategories.TASK_SIMULATION)]
+        [DataRow(TestCategories.THREADED_SIMULATION)]
+        public void StartSimulationTest(string applicationSimulationImplementation)
         {
+            SetApplicationSimulation(applicationSimulationImplementation);
+
             int moved = 0;
 
             _applicationSimulation.Start(1, (ball) =>
@@ -29,6 +32,7 @@ namespace ApplicationTest.TestGroups
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.TIMER_SIMULATION)]
         public void StartStopStartSimulationTest() 
         {
             int moved = 0;

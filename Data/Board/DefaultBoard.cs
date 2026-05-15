@@ -29,6 +29,12 @@ namespace Data.Board
             }
         }
 
+        public DefaultBoard(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
+
         public event EventHandler? DimensionsChanged;
 
         private void RaiseDimensionsChanged()

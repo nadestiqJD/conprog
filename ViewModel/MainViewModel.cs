@@ -13,6 +13,9 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Data;
 using System.Threading.Tasks;
+using Application.ApplicationSimulation;
+using Application.BallMovement;
+using Application.CollisionCheckStrategy;
 
 namespace ViewModel
 {
@@ -64,22 +67,29 @@ namespace ViewModel
             ILoggerFactory loggerFactory = new LoggerFactory();
             _logger = loggerFactory.CreateLogger<MainViewModel>();
 
-            StartCommand = new RelayCommand<object>(async (_) => await StartSimulation());
-            StopCommand = new RelayCommand<object>(async (_) => await StopSimulation());
+            StartCommand = new RelayCommand<object>((_) => StartSimulation());
+            StopCommand = new RelayCommand<object>((_) => StopSimulation());
         }
 
-        public MainViewModel() : this(new ApplicationSimulation(new DataSimulation())) { }
+        public MainViewModel() : this(
+            new TaskApplicationSimulation(
+                new DataSimulation(), 
+                new DefaultBallMovement(
+                    new PositionOverlapCollisionCheckStrategy()
+                    )
+                )
+            ) { }
         
         private async Task StartSimulation()
         {
-            lock (_startLock)
-            {
-                if (_applicationStarted)
-                {
-                    return;
-                }
-                _applicationStarted = true;
-            }
+            //lock (_startLock)
+            //{
+            //    if (_applicationStarted)
+            //    {
+            //        return;
+            //    }
+            //    _applicationStarted = true;
+            //}
 
             if (BallCount == 0)
             {
@@ -88,26 +98,26 @@ namespace ViewModel
             }
 
             Balls.Clear();
-            await _applicationSimulation.Start(BallCount, HandleBallCreation, (board) => Board = new BoardModel(board));
+            await _applicationSimulation.Start(
+                BallCount, 
+                (ball) => {
+                    IBallModel ballModel = new BallModel(ball);
+                    Balls.Add(ballModel);
+                }, 
+                (board) => Board = new BoardModel(board));
         }
 
         private async Task StopSimulation()
         {
-            lock (_startLock)
-            {
-                if (!_applicationStarted)
-                {
-                    return;
-                }
-                _applicationStarted = false;
-            }
+            //lock (_startLock)
+            //{
+            //    if (!_applicationStarted)
+            //    {
+            //        return;
+            //    }
+            //    _applicationStarted = false;
+            //}
             await _applicationSimulation.Stop();
-        }
-
-        private void HandleBallCreation(IBall ball)
-        {
-            IBallModel ballModel = new BallModel(ball);
-            Balls.Add(ballModel);
         }
     }
 }

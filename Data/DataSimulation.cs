@@ -72,7 +72,11 @@ namespace Data
 
         public IBoard CreateBoard(int width, int height)
         {
-            return new DefaultBoard() { Width = width, Height = height };
+            int minDimension = 10;
+            if (width < minDimension || height < minDimension)
+                throw new ArgumentException($"Board cannot be smaller than {minDimension}x{minDimension} in size");
+
+            return new DefaultBoard(width, height);
         }
     }
 }

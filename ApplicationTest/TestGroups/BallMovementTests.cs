@@ -1,4 +1,5 @@
-﻿using Data.Ball;
+﻿using ApplicationTest.Base;
+using Data.Ball;
 using Data.Board;
 using Data.Position;
 using Data.Vector;
@@ -9,61 +10,34 @@ namespace ApplicationTest.TestGroups
     {
 
         [TestMethod]
-        public void BallShouldMoveIfInBoardTest()
+        public async Task BallShouldMoveIfInBoardTest()
         {
             IPosition startPosition = new DefaultPosition { X = 200, Y = 200 };
             IPosition expectedPosition = new DefaultPosition { X = 201, Y = 200 };
             IVector vector = new AngleVector(1, 0);
             IBall ball = new AngleBall { CurrentPosition = startPosition, Vector = vector, Radius = 1, Weight = 0 };
 
-            Assert.IsFalse(_applicationSimulation.MoveBall(ball));
+            await _ballMovement.MoveBall(ball);     // this should check if ball has a Board
             Assert.AreEqual(startPosition, ball.CurrentPosition);
+            await _ballMovement.SetNewPositionForBall(ball); // this shouldn't
+            Assert.AreNotEqual(startPosition, ball.CurrentPosition);
+            ball.CurrentPosition = startPosition;
 
-            IBoard board = new DefaultBoard();
+            IBoard board = new DefaultBoard(500, 500);
             _dataSimulation.AddBallToBoard(board, ball);
 
-            Assert.IsTrue(_applicationSimulation.MoveBall(ball));
+            await _ballMovement.SetNewPositionForBall(ball);
             Assert.AreEqual(expectedPosition, ball.CurrentPosition);
         }
 
         [TestMethod]
-        public void AllBallsShouldMoveTest()
+        [DataRow(398, 200, 399, 200, 0)]
+        [DataRow(2, 200, 1, 200, 180)]
+        [DataRow(200, 398, 200, 399, 90)]
+        [DataRow(200, 2, 200, 1, 270)]
+        public async Task BallsChangeDirectionWhenHittingWalls(int startX, int startY, int endX, int endY, int angle)
         {
-            IBoard board = new DefaultBoard() { Width = 400, Height = 400 };
-            var dataList = new List<(int X, int Y, int Angle)>
-            {
-                (100, 100, 0),
-                (200, 200, 0),
-                (300, 300, 0),
-            };
-
-            Dictionary<IBall, IPosition> startingPositions = new Dictionary<IBall, IPosition>();
-
-            foreach (var item in dataList)
-            {
-                IPosition startPosition = new DefaultPosition { X = item.X, Y = item.Y };
-                IVector vector = new AngleVector(1, item.Angle);
-                IBall ball = new AngleBall { CurrentPosition = startPosition, Vector = vector, Radius = 1, Weight = 0 };
-                startingPositions.Add(ball, startPosition);
-            }
-
-            _applicationSimulation.MoveAllBallsInBoard(board);
-
-            foreach (var ball in board.Balls)
-            {
-                Assert.AreNotEqual(startingPositions.Where(x => x.Key==ball).FirstOrDefault().Value, ball.CurrentPosition );
-            }
-
-        }
-
-        [TestMethod]
-        [DataRow(397, 200, 398, 200, 0)]
-        [DataRow(1, 200, 0, 200, 180)]
-        [DataRow(200, 397, 200, 398, 90)]
-        [DataRow(200, 1, 200, 0, 270)]
-        public void BallStopWhenHitWallTest(int startX, int startY, int endX, int endY, int angle)
-        {
-            IBoard board = new DefaultBoard() { Width = 400, Height = 400 };
+            IBoard board = new DefaultBoard(400, 400);
 
             IPosition startPosition = new DefaultPosition { X = startX, Y = startY };
             IPosition endPosition = new DefaultPosition { X = endX, Y = endY };
@@ -75,11 +49,11 @@ namespace ApplicationTest.TestGroups
 
             Assert.AreEqual(startPosition, ball.CurrentPosition);
 
-            Assert.IsTrue(_applicationSimulation.MoveBall(ball));
+            await _ballMovement.MoveBall(ball);
             Assert.AreEqual(endPosition, ball.CurrentPosition);
 
-            Assert.IsFalse(_applicationSimulation.MoveBall(ball));
-            Assert.AreEqual(endPosition, ball.CurrentPosition);
+            await _ballMovement.MoveBall(ball);
+            Assert.AreEqual(startPosition, ball.CurrentPosition);
         }
     }
 }
