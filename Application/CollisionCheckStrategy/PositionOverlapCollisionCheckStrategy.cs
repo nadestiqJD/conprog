@@ -1,13 +1,14 @@
 ﻿using Data.Ball;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Application.CollisionCheckStrategy
 {
     public class PositionOverlapCollisionCheckStrategy : ICollisionCheckStrategy
     {
-        public bool AreBallsColliding(IBall ball1, IBall ball2)
+        private bool AreBallsColliding(IBall ball1, IBall ball2)
         {
             if (ball1 == ball2)
             {
@@ -19,6 +20,13 @@ namespace Application.CollisionCheckStrategy
                 <= (ball1.Radius + ball2.Radius) * (ball1.Radius + ball2.Radius);
 
             return positionsOverlap;
+        }
+
+        public List<IBall> GetCollidingBallsForBall(IBall ball)
+        {
+            return ball.Board.Balls
+                .Where(other => AreBallsColliding(ball, other))
+                .ToList();
         }
     }
 }

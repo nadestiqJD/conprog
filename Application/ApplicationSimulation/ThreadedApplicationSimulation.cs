@@ -40,10 +40,7 @@ namespace Application.ApplicationSimulation
                 {
                     while (!ct.IsCancellationRequested)
                     {
-                        lock (_ballMovementLock)
-                        {
-                            _ballMovement.MoveBall(ball);
-                        }
+                        _ballMovement.MoveBall(ball).Wait();
 
                         int delay = 1000 / _refreshRate;
 

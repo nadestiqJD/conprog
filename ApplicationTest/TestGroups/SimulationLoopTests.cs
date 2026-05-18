@@ -32,9 +32,13 @@ namespace ApplicationTest.TestGroups
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.TIMER_SIMULATION)]
-        public void StartStopStartSimulationTest() 
+        [DataRow(TestCategories.TIMER_SIMULATION)]
+        [DataRow(TestCategories.TASK_SIMULATION)]
+        [DataRow(TestCategories.THREADED_SIMULATION)]
+        public void StartStopStartSimulationTest(string applicationSimulationImplementation) 
         {
+            SetApplicationSimulation(applicationSimulationImplementation);
+
             int moved = 0;
             int previousMoved = 0;
 

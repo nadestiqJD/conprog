@@ -17,8 +17,6 @@ namespace Application.BallMovement
 
         Task SetNewPositionForBall(IBall ball);
 
-        Task<List<IBall>> FindCollidingBallsForBall(IBall ball);
-
         Task HandleWallCollisionForBall(IBall ball);
 
         Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall);

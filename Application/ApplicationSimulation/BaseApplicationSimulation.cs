@@ -17,8 +17,6 @@ namespace Application.ApplicationSimulation
         protected readonly int _refreshRate = 60;
         protected IBoard? Board { get; set; }
 
-        protected readonly object _ballMovementLock = new object();
-
         #endregion
 
         private readonly object _simulationStartStopLock = new object();

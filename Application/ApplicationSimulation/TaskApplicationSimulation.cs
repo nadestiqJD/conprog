@@ -42,10 +42,7 @@ namespace Application.ApplicationSimulation
                     {
                         ct.ThrowIfCancellationRequested();
 
-                        lock (_ballMovementLock)
-                        {
-                            _ballMovement.MoveBall(ball);
-                        }
+                        await _ballMovement.MoveBall(ball);
 
                         await Task.Delay(1000 / _refreshRate, ct);
                     }

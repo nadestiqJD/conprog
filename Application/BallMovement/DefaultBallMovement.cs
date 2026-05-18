@@ -33,12 +33,6 @@ namespace Application.BallMovement
         }
 
         #region IBallMovement
-        public async Task<List<IBall>> FindCollidingBallsForBall(IBall ball)
-        {
-            return ball.Board.Balls
-                .Where(other => _collisionCheckStrategy.AreBallsColliding(ball, other))
-                .ToList();
-        }
 
         public async Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall)
         {
@@ -155,7 +149,7 @@ namespace Application.BallMovement
                 SetNewPositionForBall(ball).Wait();
                 HandleWallCollisionForBall(ball).Wait();
 
-                foreach (var otherBall in FindCollidingBallsForBall(ball).Result)
+                foreach (var otherBall in _collisionCheckStrategy.GetCollidingBallsForBall(ball))
                 {
                     HandleBallCollisionForBall(ball, otherBall).Wait();
                 }

@@ -59,12 +59,9 @@ namespace Application.ApplicationSimulation
 
         private void MoveTask(object? _)
         {
-            lock (_ballMovementLock)
+            foreach (var ball in Board.Balls)
             {
-                foreach (var ball in Board.Balls)
-                {
-                    _ballMovement.MoveBall(ball);
-                }
+                _ballMovement.MoveBall(ball).Wait();
             }
         }
     }
