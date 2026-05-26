@@ -13,6 +13,8 @@ namespace Data.Ball
 
         IPosition CurrentPosition { get;  set; }
 
+        Guid Id { get; }
+
         int Radius { get; }
 
         IVector Vector { get; set; }

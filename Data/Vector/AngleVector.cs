@@ -50,5 +50,10 @@ namespace Data.Vector
                 Y = Math.Sin(rad) * Length
             };
         }
+
+        public override string ToString()
+        {
+            return $"AngleVector(Length: {Length}, Angle: {Angle}°)";
+        }
     }
 }

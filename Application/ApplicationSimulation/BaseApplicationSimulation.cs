@@ -1,8 +1,8 @@
-﻿using Application.BallMovement;
+﻿using Application.ApplicationLogger;
+using Application.BallMovement;
 using Data;
 using Data.Ball;
 using Data.Board;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,7 +24,7 @@ namespace Application.ApplicationSimulation
 
         #region DI Containers
 
-        protected readonly ILogger _logger;
+        protected readonly IApplicationLogger _logger;
 
         protected readonly IDataSimulation _dataSimulation;
 
@@ -32,13 +32,11 @@ namespace Application.ApplicationSimulation
 
         #endregion
 
-        public BaseApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement)
+        public BaseApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, IApplicationLogger logger)
         {
-            ILoggerFactory loggerFactory = new LoggerFactory();
-            _logger = loggerFactory.CreateLogger<ThreadedApplicationSimulation>();
-
             _dataSimulation = dataSimulation;
             _ballMovement = ballMovement;
+            _logger = logger;
         }
 
         #region IApplicationSimulation
@@ -47,7 +45,7 @@ namespace Application.ApplicationSimulation
         {
             Board.Width = width;
             Board.Height = height;
-            _logger.LogInformation("Board dimensions in simulation set to {}x{}", width, height);
+            _logger.Log($"Board dimensions in simulation set to {width}x{height}");
         }
 
         public abstract Task Start(int ballCount, Action<IBall> ballCreationCallback, Action<IBoard> boardCreationCallback);
@@ -61,7 +59,7 @@ namespace Application.ApplicationSimulation
             {
                 if (_isApplicationChangingState)
                 {
-                    _logger.LogError("Cannot start simulation because it is already changing state.");
+                    _logger.Log("Cannot start simulation because it is already changing state.");
                     return;
                 }
                 _isApplicationChangingState = true;

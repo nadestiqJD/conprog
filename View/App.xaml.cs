@@ -1,6 +1,5 @@
 ﻿using Application;
 using Data;
-using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using ViewModel;
 using WpfApp = System.Windows.Application;

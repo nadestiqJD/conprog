@@ -1,8 +1,8 @@
-﻿using Application.CollisionCheckStrategy;
+﻿using Application.ApplicationLogger;
+using Application.CollisionCheckStrategy;
 using Data.Ball;
 using Data.Position;
 using Data.Vector;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +16,15 @@ namespace Application.BallMovement
         #region DI Containers
 
         private readonly ICollisionCheckStrategy _collisionCheckStrategy;
-        private readonly ILogger<DefaultBallMovement> _logger;
+        private readonly IApplicationLogger _logger;
 
         #endregion
 
         private readonly object _moveBallLock;
 
-        public DefaultBallMovement(ICollisionCheckStrategy collisionCheckStrategy)
+        public DefaultBallMovement(ICollisionCheckStrategy collisionCheckStrategy, IApplicationLogger logger)
         {
-            ILoggerFactory loggerFactory = new LoggerFactory();
-            _logger = loggerFactory.CreateLogger<DefaultBallMovement>();
-
+            _logger = logger;
             _collisionCheckStrategy = collisionCheckStrategy;
 
             _moveBallLock = new object();
@@ -35,7 +33,9 @@ namespace Application.BallMovement
         #region IBallMovement
 
         public async Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall)
-        {
+        {   
+            _logger.LogCollision(currentlyMovingBall, otherBall);
+
             var delta1 = currentlyMovingBall.Vector.GetDelta();
             var delta2 = otherBall.Vector.GetDelta();
 
@@ -140,7 +140,7 @@ namespace Application.BallMovement
         {
             if (ball.Board == null)
             {
-                _logger.LogWarning("Ball is not in a board, cannot move");
+                _logger.Log("Ball is not in a board, cannot move");
                 return;
             }
 
@@ -154,6 +154,8 @@ namespace Application.BallMovement
                     HandleBallCollisionForBall(ball, otherBall).Wait();
                 }
             }
+
+            _logger.LogPosition(ball);
         }
 
         public async Task SetNewPositionForBall(IBall ball)

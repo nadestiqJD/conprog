@@ -34,6 +34,8 @@ namespace Data.Ball
         public IVector Vector { get; set; }
         public IBoard? Board { get; set; }
 
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public AngleBall() { }
     }
 }

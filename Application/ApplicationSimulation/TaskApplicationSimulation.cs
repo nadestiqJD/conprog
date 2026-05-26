@@ -1,8 +1,8 @@
-﻿using Application.BallMovement;
+﻿using Application.ApplicationLogger;
+using Application.BallMovement;
 using Data;
 using Data.Ball;
 using Data.Board;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,8 +13,8 @@ namespace Application.ApplicationSimulation
 {
     public class TaskApplicationSimulation : BaseApplicationSimulation
     {
-        public TaskApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement)
-            : base(dataSimulation, ballMovement)
+        public TaskApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, IApplicationLogger applicationLogger)
+            : base(dataSimulation, ballMovement, applicationLogger)
         {
         }
 
@@ -52,7 +52,7 @@ namespace Application.ApplicationSimulation
             }
             boardCallBack(Board);
 
-            _logger.LogInformation("Simulation started with {ballCount} balls", ballCount);
+            _logger.Log($"Simulation started with {ballCount} balls");
 
             UnlockSimulationStateChange();
         }
@@ -69,7 +69,7 @@ namespace Application.ApplicationSimulation
 
                 _dataSimulation.DisposeBoard(Board);
 
-                _logger.LogInformation("Simulation stopped");
+                _logger.Log("Simulation stopped");
             }
 
             UnlockSimulationStateChange();

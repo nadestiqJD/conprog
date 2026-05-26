@@ -10,19 +10,20 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Linq;
-using Microsoft.Extensions.Logging;
 using Data;
 using System.Threading.Tasks;
 using Application.ApplicationSimulation;
 using Application.BallMovement;
 using Application.CollisionCheckStrategy;
+using Application.ApplicationLogger;
+using Data.Logger;
 
 namespace ViewModel
 {
     public class MainViewModel : ObservableObject
     {
 
-        private readonly ILogger _logger;
+        private readonly IApplicationLogger _logger;
         private readonly IApplicationSimulation _applicationSimulation;
         private IBoardModel _boardModel;
 
@@ -61,25 +62,30 @@ namespace ViewModel
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
 
-        public MainViewModel(IApplicationSimulation applicationSimulation)
+        public MainViewModel(IApplicationLogger logger, IApplicationSimulation applicationSimulation)
         {
             _applicationSimulation = applicationSimulation;
-            ILoggerFactory loggerFactory = new LoggerFactory();
-            _logger = loggerFactory.CreateLogger<MainViewModel>();
+            _logger = logger;
 
             StartCommand = new RelayCommand<object>((_) => StartSimulation());
             StopCommand = new RelayCommand<object>((_) => StopSimulation());
         }
 
-        public MainViewModel() : this(
+        public MainViewModel() : this(new ApplicationLogger(new FileLogger()))
+        {
+        }
+
+        private MainViewModel(IApplicationLogger logger) : this(
+            logger,
             new TaskApplicationSimulation(
-                new DataSimulation(), 
-                new DefaultBallMovement(
-                    new PositionOverlapCollisionCheckStrategy()
-                    )
-                )
-            ) { }
-        
+                new DataSimulation(),
+                new DefaultBallMovement(new PositionOverlapCollisionCheckStrategy(), logger),
+                logger
+            )
+        )
+        {
+        }
+
         private async Task StartSimulation()
         {
             //lock (_startLock)
@@ -93,7 +99,7 @@ namespace ViewModel
 
             if (BallCount == 0)
             {
-                _logger.LogWarning("Cannot start simulation with zero balls.");
+                _logger.Log("Cannot start simulation with zero balls.");
                 return;
             }
 
