@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Data.DataLogger;
+using Data.DataSimulation;
 
 namespace DataTest
 {
@@ -9,7 +10,7 @@ namespace DataTest
         [TestInitialize]
         public void Setup()
         {
-            _dataSimulation = new DataSimulation();
+            _dataSimulation = new DataSimulation(new DummyLogger());
         }
     }
 }

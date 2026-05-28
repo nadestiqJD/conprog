@@ -7,13 +7,8 @@ namespace ApplicationTest.TestGroups
     public sealed class SimulationLoopTests : BaseApplicationTest
     {
         [TestMethod]
-        [DataRow(TestCategories.TIMER_SIMULATION)]
-        [DataRow(TestCategories.TASK_SIMULATION)]
-        [DataRow(TestCategories.THREADED_SIMULATION)]
-        public void StartSimulationTest(string applicationSimulationImplementation)
+        public void StartSimulationTest()
         {
-            SetApplicationSimulation(applicationSimulationImplementation);
-
             int moved = 0;
 
             _applicationSimulation.Start(1, (ball) =>
@@ -32,13 +27,8 @@ namespace ApplicationTest.TestGroups
         }
 
         [TestMethod]
-        [DataRow(TestCategories.TIMER_SIMULATION)]
-        [DataRow(TestCategories.TASK_SIMULATION)]
-        [DataRow(TestCategories.THREADED_SIMULATION)]
-        public void StartStopStartSimulationTest(string applicationSimulationImplementation) 
+        public void StartStopStartSimulationTest() 
         {
-            SetApplicationSimulation(applicationSimulationImplementation);
-
             int moved = 0;
             int previousMoved = 0;
 

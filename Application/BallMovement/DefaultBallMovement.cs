@@ -1,6 +1,6 @@
-﻿using Application.ApplicationLogger;
-using Application.CollisionCheckStrategy;
+﻿using Application.CollisionCheckStrategy;
 using Data.Ball;
+using Data.Logger;
 using Data.Position;
 using Data.Vector;
 using System;
@@ -16,13 +16,13 @@ namespace Application.BallMovement
         #region DI Containers
 
         private readonly ICollisionCheckStrategy _collisionCheckStrategy;
-        private readonly IApplicationLogger _logger;
+        private readonly ILogger _logger;
 
         #endregion
 
         private readonly object _moveBallLock;
 
-        public DefaultBallMovement(ICollisionCheckStrategy collisionCheckStrategy, IApplicationLogger logger)
+        public DefaultBallMovement(ICollisionCheckStrategy collisionCheckStrategy, ILogger logger)
         {
             _logger = logger;
             _collisionCheckStrategy = collisionCheckStrategy;
@@ -33,8 +33,8 @@ namespace Application.BallMovement
         #region IBallMovement
 
         public async Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall)
-        {   
-            _logger.LogCollision(currentlyMovingBall, otherBall);
+        {
+            await _logger.LogInfo($"Ball: {currentlyMovingBall.Id} has contact with Ball: {otherBall.Id}");
 
             var delta1 = currentlyMovingBall.Vector.GetDelta();
             var delta2 = otherBall.Vector.GetDelta();
@@ -140,7 +140,7 @@ namespace Application.BallMovement
         {
             if (ball.Board == null)
             {
-                _logger.Log("Ball is not in a board, cannot move");
+                await _logger.Log("Ball is not in a board, cannot move");
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace Application.BallMovement
                 }
             }
 
-            _logger.LogPosition(ball);
+            await _logger.LogTrace($"Ball: {ball.Id} is at position: {ball.CurrentPosition}, Vector: {ball.Vector}");
         }
 
         public async Task SetNewPositionForBall(IBall ball)
@@ -170,11 +170,6 @@ namespace Application.BallMovement
 
             ball.CurrentPosition = newPosition;
         }
-        #endregion
-
-
-        #region Private Methods
-
         #endregion
 
     }

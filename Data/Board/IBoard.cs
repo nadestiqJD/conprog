@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Data.Board
 {
-    public interface IBoard
+    public interface IBoard : IDisposable
     {
         int Width { get; set; }
 

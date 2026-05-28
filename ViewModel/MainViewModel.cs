@@ -15,20 +15,20 @@ using System.Threading.Tasks;
 using Application.ApplicationSimulation;
 using Application.BallMovement;
 using Application.CollisionCheckStrategy;
-using Application.ApplicationLogger;
+using System.Threading;
 using Data.Logger;
+using Data.DataSimulation;
 
 namespace ViewModel
 {
     public class MainViewModel : ObservableObject
     {
 
-        private readonly IApplicationLogger _logger;
+        private readonly ILogger _logger;
         private readonly IApplicationSimulation _applicationSimulation;
         private IBoardModel _boardModel;
 
-        private bool _applicationStarted = false;
-        private object _startLock = new object();
+        private object _stateLock = new object();
 
         public ObservableCollection<IBallModel> Balls { get; private set; } = new ObservableCollection<IBallModel>();
 
@@ -59,10 +59,22 @@ namespace ViewModel
         }
         #endregion
 
+
+        private int _simulationTimeInSeconds;
+        public int SimulationTimeInSeconds 
+        { 
+            get => _simulationTimeInSeconds; 
+            set
+            {
+                _simulationTimeInSeconds = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
 
-        public MainViewModel(IApplicationLogger logger, IApplicationSimulation applicationSimulation)
+        public MainViewModel(ILogger logger, IApplicationSimulation applicationSimulation)
         {
             _applicationSimulation = applicationSimulation;
             _logger = logger;
@@ -71,14 +83,14 @@ namespace ViewModel
             StopCommand = new RelayCommand<object>((_) => StopSimulation());
         }
 
-        public MainViewModel() : this(new ApplicationLogger(new FileLogger()))
+        public MainViewModel() : this(new FileLogger())
         {
         }
 
-        private MainViewModel(IApplicationLogger logger) : this(
+        private MainViewModel(ILogger logger) : this(
             logger,
             new TaskApplicationSimulation(
-                new DataSimulation(),
+                new DataSimulation(logger),
                 new DefaultBallMovement(new PositionOverlapCollisionCheckStrategy(), logger),
                 logger
             )
@@ -88,42 +100,51 @@ namespace ViewModel
 
         private async Task StartSimulation()
         {
-            //lock (_startLock)
-            //{
-            //    if (_applicationStarted)
-            //    {
-            //        return;
-            //    }
-            //    _applicationStarted = true;
-            //}
-
-            if (BallCount == 0)
+            Task startTask;
+            Task startTimerTask = new Task(() =>
             {
-                _logger.Log("Cannot start simulation with zero balls.");
-                return;
+                SimulationTimeInSeconds = 0;
+                _simulationTimeTimer = new Timer(IncrementSecondsCounter, null, 0, 1000);
+            });
+            lock (_stateLock)
+            {
+                if (BallCount == 0)
+                {
+                    _logger.Log("Cannot start simulation with zero balls.");
+                    return;
+                }
+
+                Balls.Clear();
+                startTask = _applicationSimulation.Start(
+                    BallCount,
+                    (ball) =>
+                    {
+                        IBallModel ballModel = new BallModel(ball);
+                        Balls.Add(ballModel);
+                    },
+                    (board) => Board = new BoardModel(board));
+                startTimerTask.Start();
             }
 
-            Balls.Clear();
-            await _applicationSimulation.Start(
-                BallCount, 
-                (ball) => {
-                    IBallModel ballModel = new BallModel(ball);
-                    Balls.Add(ballModel);
-                }, 
-                (board) => Board = new BoardModel(board));
+            Task.WaitAll(new Task[] {startTask, startTimerTask});
         }
 
         private async Task StopSimulation()
         {
-            //lock (_startLock)
-            //{
-            //    if (!_applicationStarted)
-            //    {
-            //        return;
-            //    }
-            //    _applicationStarted = false;
-            //}
-            await _applicationSimulation.Stop();
+            Task stopTask;
+            lock (_stateLock)
+            {
+                stopTask = _applicationSimulation.Stop();
+                _simulationTimeTimer?.Dispose();
+                _simulationTimeTimer = null;
+            }
+            await stopTask;
         }
+
+        private void IncrementSecondsCounter(Object stateInfo)
+        {
+            ++SimulationTimeInSeconds;
+        }
+        private Timer? _simulationTimeTimer;
     }
 }

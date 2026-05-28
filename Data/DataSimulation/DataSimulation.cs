@@ -1,5 +1,6 @@
 ﻿using Data.Ball;
 using Data.Board;
+using Data.Logger;
 using Data.Position;
 using Data.Vector;
 using System;
@@ -7,17 +8,20 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace Data
+namespace Data.DataSimulation
 {
     public class DataSimulation : IDataSimulation
     {
+        private readonly ILogger _logger;
+
         readonly Random random = new Random();
 
         private static readonly int _radius = 10;
         private static readonly double _velocity = _radius * 0.4;
 
-        public DataSimulation()
+        public DataSimulation(ILogger logger)
         {
+            _logger = logger;
         }
 
         public IBall CreateBallInBoard(IBoard board)
@@ -50,24 +54,20 @@ namespace Data
         {
             board.Balls.Add(ball);
             ball.Board = board;
-
-        }
-
-        public void DisposeBoard(IBoard board)
-        {
-            foreach (var ball in board.Balls)
-            {
-                ball.Board = null;
-            }
-            board.Balls.Clear();
         }
 
         public IBoard CreateBoard(int width, int height)
         {
             int minDimension = 10;
             if (width < minDimension || height < minDimension)
-                throw new ArgumentException($"Board cannot be smaller than {minDimension}x{minDimension} in size");
+            {
+                string message = $"Board cannot be smaller than {minDimension}x{minDimension} in size";
+                _logger.LogError(message);
 
+                throw new ArgumentException(message);
+            }
+
+            _logger.LogDebug($"Created Board {width}x{height}");
             return new DefaultBoard(width, height);
         }
     }

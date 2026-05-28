@@ -1,8 +1,8 @@
-﻿using Application.ApplicationLogger;
-using Application.BallMovement;
-using Data;
+﻿using Application.BallMovement;
 using Data.Ball;
 using Data.Board;
+using Data.Logger;
+using Data.DataSimulation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,12 +19,16 @@ namespace Application.ApplicationSimulation
 
         #endregion
 
+        #region Private fields
+
         private readonly object _simulationStartStopLock = new object();
         private bool _isApplicationChangingState = false;
 
+        #endregion
+
         #region DI Containers
 
-        protected readonly IApplicationLogger _logger;
+        protected readonly ILogger _logger;
 
         protected readonly IDataSimulation _dataSimulation;
 
@@ -32,7 +36,7 @@ namespace Application.ApplicationSimulation
 
         #endregion
 
-        public BaseApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, IApplicationLogger logger)
+        public BaseApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, ILogger logger)
         {
             _dataSimulation = dataSimulation;
             _ballMovement = ballMovement;

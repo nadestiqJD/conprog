@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Data
+namespace Data.DataSimulation
 {
     public interface IDataSimulation
     {
@@ -16,7 +16,5 @@ namespace Data
         void RemoveBallFromBoard(IBoard board, IBall ball);
 
         void AddBallToBoard(IBoard board, IBall ball);
-
-        void DisposeBoard(IBoard board);
     }
 }

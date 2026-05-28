@@ -1,8 +1,8 @@
-﻿using Application.ApplicationLogger;
-using Application.BallMovement;
-using Data;
+﻿using Application.BallMovement;
 using Data.Ball;
 using Data.Board;
+using Data.DataSimulation;
+using Data.Logger;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,8 +13,8 @@ namespace Application.ApplicationSimulation
 {
     public class TaskApplicationSimulation : BaseApplicationSimulation
     {
-        public TaskApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, IApplicationLogger applicationLogger)
-            : base(dataSimulation, ballMovement, applicationLogger)
+        public TaskApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, ILogger logger)
+            : base(dataSimulation, ballMovement, logger)
         {
         }
 
@@ -67,7 +67,7 @@ namespace Application.ApplicationSimulation
                 _ballsSimulationTokenSource.Dispose();
                 _ballsSimulationTokenSource = null;
 
-                _dataSimulation.DisposeBoard(Board);
+                Board?.Dispose();
 
                 _logger.Log("Simulation stopped");
             }

@@ -41,7 +41,16 @@ namespace Data.Board
         {
             DimensionsChanged?.Invoke(this, EventArgs.Empty);
         }
-        
+
+        public void Dispose()
+        {
+            foreach (var ball in Balls)
+            {
+                ball.Board = null;
+            }
+            Balls.Clear();
+        }
+
         public List<IBall>Balls { get; } = new List<IBall>();
     }
 }
