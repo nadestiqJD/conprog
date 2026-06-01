@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Application.SimulationClock;
 
 namespace Application.ApplicationSimulation
 {
@@ -34,13 +35,19 @@ namespace Application.ApplicationSimulation
 
         protected readonly IBallMovement _ballMovement;
 
+        protected readonly ISimulationClock _simulationClock;
+
         #endregion
 
-        public BaseApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, ILogger logger)
+        public BaseApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, 
+            ILogger logger,
+            ISimulationClock simulationClock
+            )
         {
             _dataSimulation = dataSimulation;
             _ballMovement = ballMovement;
             _logger = logger;
+            _simulationClock = simulationClock;
         }
 
         #region IApplicationSimulation
@@ -49,7 +56,7 @@ namespace Application.ApplicationSimulation
         {
             Board.Width = width;
             Board.Height = height;
-            _logger.Log($"Board dimensions in simulation set to {width}x{height}");
+            _logger.LogInfoAsync($"Board dimensions in simulation set to {width}x{height}");
         }
 
         public abstract Task Start(int ballCount, Action<IBall> ballCreationCallback, Action<IBoard> boardCreationCallback);
@@ -63,7 +70,7 @@ namespace Application.ApplicationSimulation
             {
                 if (_isApplicationChangingState)
                 {
-                    _logger.Log("Cannot start simulation because it is already changing state.");
+                    _logger.LogWarningAsync("Cannot start simulation because it is already changing state.");
                     return;
                 }
                 _isApplicationChangingState = true;

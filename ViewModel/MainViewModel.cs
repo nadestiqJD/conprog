@@ -18,6 +18,8 @@ using Application.CollisionCheckStrategy;
 using System.Threading;
 using Data.Logger;
 using Data.DataSimulation;
+using Model.SimulationClock;
+using Application.SimulationClock;
 
 namespace ViewModel
 {
@@ -59,40 +61,33 @@ namespace ViewModel
         }
         #endregion
 
-
-        private int _simulationTimeInSeconds;
-        public int SimulationTimeInSeconds 
-        { 
-            get => _simulationTimeInSeconds; 
-            set
-            {
-                _simulationTimeInSeconds = value;
-                RaisePropertyChanged();
-            }
-        }
+        public ISimulationClockModel SimulationClock { get; private set; }
 
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
 
-        public MainViewModel(ILogger logger, IApplicationSimulation applicationSimulation)
+        public MainViewModel(ILogger logger, ISimulationClock simulationClock, IApplicationSimulation applicationSimulation)
         {
             _applicationSimulation = applicationSimulation;
             _logger = logger;
+            SimulationClock = new SimulationClockModel(simulationClock);
 
             StartCommand = new RelayCommand<object>((_) => StartSimulation());
             StopCommand = new RelayCommand<object>((_) => StopSimulation());
         }
 
-        public MainViewModel() : this(new FileLogger())
+        public MainViewModel() : this(new FileLogger(), new SecondSimulationClock())
         {
         }
 
-        private MainViewModel(ILogger logger) : this(
+        private MainViewModel(ILogger logger, ISimulationClock simulationClock) : this(
             logger,
+            simulationClock,
             new TaskApplicationSimulation(
                 new DataSimulation(logger),
                 new DefaultBallMovement(new PositionOverlapCollisionCheckStrategy(), logger),
-                logger
+                logger,
+                simulationClock
             )
         )
         {
@@ -101,16 +96,11 @@ namespace ViewModel
         private async Task StartSimulation()
         {
             Task startTask;
-            Task startTimerTask = new Task(() =>
-            {
-                SimulationTimeInSeconds = 0;
-                _simulationTimeTimer = new Timer(IncrementSecondsCounter, null, 0, 1000);
-            });
             lock (_stateLock)
             {
                 if (BallCount == 0)
                 {
-                    _logger.Log("Cannot start simulation with zero balls.");
+                    _logger.LogAsync("Cannot start simulation with zero balls.");
                     return;
                 }
 
@@ -123,10 +113,9 @@ namespace ViewModel
                         Balls.Add(ballModel);
                     },
                     (board) => Board = new BoardModel(board));
-                startTimerTask.Start();
             }
 
-            Task.WaitAll(new Task[] {startTask, startTimerTask});
+            Task.WaitAll(new Task[] {startTask});
         }
 
         private async Task StopSimulation()
@@ -135,16 +124,8 @@ namespace ViewModel
             lock (_stateLock)
             {
                 stopTask = _applicationSimulation.Stop();
-                _simulationTimeTimer?.Dispose();
-                _simulationTimeTimer = null;
             }
             await stopTask;
         }
-
-        private void IncrementSecondsCounter(Object stateInfo)
-        {
-            ++SimulationTimeInSeconds;
-        }
-        private Timer? _simulationTimeTimer;
     }
 }

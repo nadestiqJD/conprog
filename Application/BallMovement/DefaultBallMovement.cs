@@ -34,7 +34,7 @@ namespace Application.BallMovement
 
         public async Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall)
         {
-            await _logger.LogInfo($"Ball: {currentlyMovingBall.Id} has contact with Ball: {otherBall.Id}");
+            _logger.LogDebugAsync($"Ball: {currentlyMovingBall.Id} has contact with Ball: {otherBall.Id}");
 
             var delta1 = currentlyMovingBall.Vector.GetDelta();
             var delta2 = otherBall.Vector.GetDelta();
@@ -140,7 +140,7 @@ namespace Application.BallMovement
         {
             if (ball.Board == null)
             {
-                await _logger.Log("Ball is not in a board, cannot move");
+                _logger.LogErrorAsync("Ball is not in a board, cannot move");
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace Application.BallMovement
                 }
             }
 
-            await _logger.LogTrace($"Ball: {ball.Id} is at position: {ball.CurrentPosition}, Vector: {ball.Vector}");
+            _logger.LogTraceAsync($"Ball: {ball.Id} is at position: {ball.CurrentPosition}, Vector: {ball.Vector}");
         }
 
         public async Task SetNewPositionForBall(IBall ball)

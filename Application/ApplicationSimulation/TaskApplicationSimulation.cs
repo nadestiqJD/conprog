@@ -1,4 +1,5 @@
 ﻿using Application.BallMovement;
+using Application.SimulationClock;
 using Data.Ball;
 using Data.Board;
 using Data.DataSimulation;
@@ -13,8 +14,13 @@ namespace Application.ApplicationSimulation
 {
     public class TaskApplicationSimulation : BaseApplicationSimulation
     {
-        public TaskApplicationSimulation(IDataSimulation dataSimulation, IBallMovement ballMovement, ILogger logger)
-            : base(dataSimulation, ballMovement, logger)
+        public TaskApplicationSimulation(
+            IDataSimulation dataSimulation, 
+            IBallMovement ballMovement,
+            ILogger logger,
+            ISimulationClock simulationClock
+            )
+            : base(dataSimulation, ballMovement, logger, simulationClock)
         {
         }
 
@@ -24,9 +30,9 @@ namespace Application.ApplicationSimulation
         private CancellationTokenSource? _ballsSimulationTokenSource;
         public async override Task Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
         {
+            await Stop();
             LockSimulationStateChange();
 
-            await Stop();
             Board = _dataSimulation.CreateBoard();
 
             _ballsSimulationTokenSource = new CancellationTokenSource();
@@ -52,7 +58,9 @@ namespace Application.ApplicationSimulation
             }
             boardCallBack(Board);
 
-            _logger.Log($"Simulation started with {ballCount} balls");
+            _logger.LogAsync($"Simulation started with {ballCount} balls");
+
+            await _simulationClock.StartClock();
 
             UnlockSimulationStateChange();
         }
@@ -69,7 +77,9 @@ namespace Application.ApplicationSimulation
 
                 Board?.Dispose();
 
-                _logger.Log("Simulation stopped");
+                _logger.LogAsync("Simulation stopped");
+
+                await _simulationClock.StopClock();
             }
 
             UnlockSimulationStateChange();

@@ -48,8 +48,8 @@
 
 
             <StackPanel Orientation="Vertical" HorizontalAlignment="Right"  Grid.Column="2" >
-                <Label Content="Czas trwania symulacji [s]" />
-                <Label Content="{Binding SimulationTimeInSeconds}" HorizontalAlignment="Right" />
+                <Label Content="Czas trwania symulacji" />
+                <Label Content="{Binding SimulationClock.FormattedTime}" HorizontalAlignment="Right" />
             </StackPanel>
         </Grid>
 

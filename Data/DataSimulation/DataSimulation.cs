@@ -62,12 +62,12 @@ namespace Data.DataSimulation
             if (width < minDimension || height < minDimension)
             {
                 string message = $"Board cannot be smaller than {minDimension}x{minDimension} in size";
-                _logger.LogError(message);
+                _logger.LogErrorAsync(message);
 
                 throw new ArgumentException(message);
             }
 
-            _logger.LogDebug($"Created Board {width}x{height}");
+            _logger.LogDebugAsync($"Created Board {width}x{height}");
             return new DefaultBoard(width, height);
         }
     }
