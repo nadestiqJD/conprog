@@ -30,7 +30,6 @@ namespace Application.ApplicationSimulation
         private CancellationTokenSource? _ballsSimulationTokenSource;
         public async override Task Start(int ballCount, Action<IBall> ballCallBack, Action<IBoard> boardCallBack)
         {
-            await Stop();
             LockSimulationStateChange();
 
             Board = _dataSimulation.CreateBoard();
@@ -48,7 +47,7 @@ namespace Application.ApplicationSimulation
                     {
                         ct.ThrowIfCancellationRequested();
 
-                        await _ballMovement.MoveBall(ball);
+                        _ballMovement.MoveBall(ball);
 
                         await Task.Delay(1000 / _refreshRate, ct);
                     }

@@ -43,8 +43,8 @@ namespace ApplicationTest.TestGroups
             board.Balls.Add(b1);
             board.Balls.Add(b2);
 
-            Assert.AreEqual(shouldCollide, _collisionCheckStrategy.GetCollidingBallsForBall(b1).Contains(b2));
-            Assert.AreEqual(shouldCollide, _collisionCheckStrategy.GetCollidingBallsForBall(b2).Contains(b1));
+            Assert.AreEqual(shouldCollide, _collisionCheckStrategy.AreBallsColliding(b1, b2));
+            Assert.AreEqual(shouldCollide, _collisionCheckStrategy.AreBallsColliding(b2, b1));
         }
     }
 }

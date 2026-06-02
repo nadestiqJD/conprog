@@ -1,6 +1,7 @@
 ﻿using Application.ApplicationSimulation;
 using Application.BallMovement;
 using Application.CollisionCheckStrategy;
+using Application.SimulationClock;
 using Data.DataLogger;
 using Data.DataSimulation;
 
@@ -15,6 +16,7 @@ namespace ApplicationTest.Base
         protected IDataSimulation _dataSimulation;
         protected ICollisionCheckStrategy _collisionCheckStrategy;
         protected IBallMovement _ballMovement;
+        protected ISimulationClock _simulationClock;
 
         [TestInitialize]
         public void Setup()
@@ -23,7 +25,7 @@ namespace ApplicationTest.Base
             _dataSimulation = new DataSimulation(log);
             _collisionCheckStrategy = new PositionOverlapCollisionCheckStrategy();
             _ballMovement = new DefaultBallMovement(_collisionCheckStrategy, log);
-            _applicationSimulation = new TaskApplicationSimulation(_dataSimulation, _ballMovement, log);
+            _applicationSimulation = new TaskApplicationSimulation(_dataSimulation, _ballMovement, log, _simulationClock);
         }
     }
 }

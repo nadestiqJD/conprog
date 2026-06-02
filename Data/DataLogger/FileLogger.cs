@@ -17,7 +17,7 @@ namespace Data.Logger
 
         private readonly CancellationToken _cancellationToken;
 
-        private readonly LogLevel _minimumLogLevel = LogLevel.DEBUG;
+        private readonly LogLevel _minimumLogLevel = LogLevel.TRACE;
 
         private readonly LogLevel _defaultLogLevel = LogLevel.INFO;
 

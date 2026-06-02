@@ -17,16 +17,16 @@ namespace ApplicationTest.TestGroups
             IVector vector = new AngleVector(1, 0);
             IBall ball = new AngleBall { CurrentPosition = startPosition, Vector = vector, Radius = 1, Weight = 0 };
 
-            await _ballMovement.MoveBall(ball);     // this should check if ball has a Board
+            _ballMovement.MoveBall(ball);     // this should check if ball has a Board
             Assert.AreEqual(startPosition, ball.CurrentPosition);
-            await _ballMovement.SetNewPositionForBall(ball); // this shouldn't
+            _ballMovement.SetNewPositionForBall(ball); // this shouldn't
             Assert.AreNotEqual(startPosition, ball.CurrentPosition);
             ball.CurrentPosition = startPosition;
 
             IBoard board = new DefaultBoard(500, 500);
             _dataSimulation.AddBallToBoard(board, ball);
 
-            await _ballMovement.SetNewPositionForBall(ball);
+            _ballMovement.SetNewPositionForBall(ball);
             Assert.AreEqual(expectedPosition, ball.CurrentPosition);
         }
 
@@ -49,10 +49,10 @@ namespace ApplicationTest.TestGroups
 
             Assert.AreEqual(startPosition, ball.CurrentPosition);
 
-            await _ballMovement.MoveBall(ball);
+            _ballMovement.MoveBall(ball);
             Assert.AreEqual(endPosition, ball.CurrentPosition);
 
-            await _ballMovement.MoveBall(ball);
+            _ballMovement.MoveBall(ball);
             Assert.AreEqual(startPosition, ball.CurrentPosition);
         }
 

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.BallMovement
@@ -20,19 +21,15 @@ namespace Application.BallMovement
 
         #endregion
 
-        private readonly object _moveBallLock;
-
         public DefaultBallMovement(ICollisionCheckStrategy collisionCheckStrategy, ILogger logger)
         {
             _logger = logger;
             _collisionCheckStrategy = collisionCheckStrategy;
-
-            _moveBallLock = new object();
         }
 
         #region IBallMovement
 
-        public async Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall)
+        public void HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall)
         {
             _logger.LogDebugAsync($"Ball: {currentlyMovingBall.Id} has contact with Ball: {otherBall.Id}");
 
@@ -73,7 +70,7 @@ namespace Application.BallMovement
             otherBall.Vector = AngleVector.GetFromDelta(b2DeltaVector);
         }
 
-        public async Task HandleWallCollisionForBall(IBall ball)
+        public void HandleWallCollisionForBall(IBall ball)
         {
             double validatedX;
             double validatedY;
@@ -136,7 +133,7 @@ namespace Application.BallMovement
             ball.Vector = newVector;
         }
 
-        public async Task MoveBall(IBall ball)
+        public void MoveBall(IBall ball)
         {
             if (ball.Board == null)
             {
@@ -144,21 +141,45 @@ namespace Application.BallMovement
                 return;
             }
 
-            lock (_moveBallLock)
-            {
-                SetNewPositionForBall(ball).Wait();
-                HandleWallCollisionForBall(ball).Wait();
 
-                foreach (var otherBall in _collisionCheckStrategy.GetCollidingBallsForBall(ball))
+            lock (ball)
+            {
+                SetNewPositionForBall(ball);
+                HandleWallCollisionForBall(ball);
+            }
+
+            foreach (var otherBall in ball.Board.Balls.Where(b => b != ball))
+            {
+                var otherIsFirst = otherBall.Id.CompareTo(ball.Id) < 0;
+
+                IBall first, second;
+                if (otherIsFirst)
                 {
-                    HandleBallCollisionForBall(ball, otherBall).Wait();
+                    first = otherBall;
+                    second = ball;
+                }
+                else
+                {
+                    first = ball;
+                    second = otherBall;
+                }
+
+                lock (first)
+                {
+                    lock (second)
+                    {
+                        if (_collisionCheckStrategy.AreBallsColliding(first, second))
+                        {
+                            HandleBallCollisionForBall(first, second);
+                        }
+                    }
                 }
             }
 
             _logger.LogTraceAsync($"Ball: {ball.Id} is at position: {ball.CurrentPosition}, Vector: {ball.Vector}");
         }
 
-        public async Task SetNewPositionForBall(IBall ball)
+        public void SetNewPositionForBall(IBall ball)
         {
             IPosition positionDelta = ball.Vector.GetDelta();
 

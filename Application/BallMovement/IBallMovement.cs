@@ -13,12 +13,12 @@ namespace Application.BallMovement
         /// </summary>
         /// <param name="ball"><see cref="IBall"/> object to move</param>
         /// <returns></returns>
-        Task MoveBall(IBall ball);
+        void MoveBall(IBall ball);
 
-        Task SetNewPositionForBall(IBall ball);
+        void SetNewPositionForBall(IBall ball);
 
-        Task HandleWallCollisionForBall(IBall ball);
+        void HandleWallCollisionForBall(IBall ball);
 
-        Task HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall);
+        void HandleBallCollisionForBall(IBall currentlyMovingBall, IBall otherBall);
     }
 }

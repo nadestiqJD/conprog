@@ -5,6 +5,6 @@ namespace Application.CollisionCheckStrategy
 {
     public interface ICollisionCheckStrategy
     {
-        List<IBall> GetCollidingBallsForBall(IBall ball);
+        bool AreBallsColliding(IBall ball1, IBall ball2);
     }
 }
